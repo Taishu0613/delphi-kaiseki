@@ -1,0 +1,200 @@
+.cp_qa *, .cp_qa *:before, .cp_qa *:after {
+	-webkit-box-sizing: border-box;
+	        box-sizing: border-box;
+}
+
+.cp_qa {
+	margin: 0 auto;
+	background: #ffffff;
+}
+/*ヘッターラジオボタン*/
+.cp_qa > .inVisible {
+	display: none;
+}
+
+.cp_qa input[type=checkbox] {
+	display: none;
+}
+
+
+/* カテゴリー */
+.cp_qa #cp_content1,
+.cp_qa #cp_content2,
+.cp_qa #cp_content3,
+.cp_qa #cp_content4 {
+	display: none;
+	padding: 20px 0 0;
+	border-top: 1px solid #dddddd;
+}
+
+.cp_qa label.cp_tabitem {
+	display: inline-block;
+	margin: 0 0 -1px;
+	padding: 15px 25px;
+	text-align: center;
+	color: #bbbbbb;
+	border: 1px solid transparent;
+}
+
+.cp_qa label.cp_tabitem:before {
+	margin-right: 10px;
+}
+
+.cp_qa label.cp_tabitem[for*='1']:before {
+	font-family: 'FontAwesome', sans-serif;
+	content: '\f07c';
+}
+
+.cp_qa label.cp_tabitem[for*='2']:before {
+	font-family: 'FontAwesome', sans-serif;
+	content: '\f15c';
+}
+
+.cp_qa label.cp_tabitem[for*='3']:before {
+	font-family: 'FontAwesome', sans-serif;
+	content: '\f121';
+}
+
+.cp_qa label.cp_tabitem[for*='4']:before {
+	font-family: 'FontAwesome', sans-serif;
+	content: '\f53f';
+}
+
+.cp_qa label.cp_tabitem:hover {
+	cursor: pointer;
+	color: #888888;
+}
+
+.cp_qa input:checked+label {
+	color: #555555;
+	border: 1px solid #dddddd;
+	border-bottom: 1px solid #ffffff;
+}
+
+/* --ブロックのバーの色 */
+.cp_qa input:checked+label[for*='1'] {
+	border-top: 5px solid #00BCD4;
+}
+
+.cp_qa input:checked+label[for*='2'] {
+	border-top: 5px solid #FF5722;
+}
+
+.cp_qa input:checked+label[for*='3'] {
+	border-top: 5px solid #03A9F4;
+}
+
+.cp_qa input:checked+label[for*='4'] {
+	border-top: 5px solid #E91E63;
+}
+
+@media screen and (max-width: 900px) {
+	.cp_qa label.cp_tabitem {
+		font-size: 0;
+	}
+
+	label:before {
+		font-size: 20px;
+		margin: 0;
+	}
+}
+
+@media screen and (max-width: 400px) {
+	.cp_qa label.cp_tabitem {
+		padding: 15px;
+	}
+
+	.cp_qa label.cp_tabitem:before {
+		margin-right: 0px;
+	}
+}
+
+/* ヘッダータブ切り替え */
+.cp_qa #cp_conttab1:checked~#cp_content1,
+.cp_qa #cp_conttab2:checked~#cp_content2,
+.cp_qa #cp_conttab3:checked~#cp_content3,
+.cp_qa #cp_conttab4:checked~#cp_content4 {
+	display: block;
+}
+
+.cp_qa .cp_qain {
+	overflow-x: hidden;
+	margin: 0 auto;
+	color: #333333;
+}
+
+.cp_qa .cp_qain .BLOCK {
+	padding: 20px 0;
+	margin: 5px;
+	/* background-color: #cccccc77; */
+	border-radius: 10px;
+
+}
+
+.Component_list,
+.Proccess_list {
+	background-color: #cccccc77;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+.Component_list:hover {
+	background-color: #e91e6279;
+}
+
+.Proccess_list:hover {
+	background-color: #03a8f47f;
+}
+
+/* 質問 */
+.cp_qa .cp_qain label {
+	position: relative;
+	display: block;
+	width: 100%;
+	margin: 0;
+	padding: 10px 10px 0 48px;
+	cursor: pointer;
+}
+
+/* ＋アイコン */
+.cp_qa .cp_qain .cp_plus {
+	font-size: 2em;
+	line-height: 100%;
+	position: absolute;
+	z-index: 5;
+	margin-top: 3px;
+	margin-left: 10px;
+	-webkit-transition: 0.2s ease;
+	transition: 0.2s ease;
+}
+
+/* 答え */
+.cp_qa .cp_qain .BLOCK-content {
+	position: relative;
+	overflow: hidden;
+	height: 0;
+	margin: 0 10px 0 48px;
+	padding: 14px 0;
+	-webkit-transition: 0.4s ease;
+	transition: 0.4s ease;
+	opacity: 0;
+}
+
+/* 質問を開いた時の仕様 */
+.cp_qa .cp_qain .BLOCK input[type=checkbox]:checked~.BLOCK-content {
+	height: auto;
+	opacity: 1;
+}
+
+/* 質問をクリックした時の▼アイコンの動き */
+.cp_qa .cp_qain .BLOCK input[type=checkbox]:checked~.cp_plus {
+	-webkit-transform: rotate(45deg);
+	transform: rotate(45deg);
+}
+
+/* リスト黒点非表示 */
+li {
+	list-style: none;
+}
