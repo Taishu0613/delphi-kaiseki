@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="・・・">
+    <meta name="format-detection" content="telephone=no,address=no,email=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="robots" content="noindex,nofollow">
+    <title>デルファイ解析</title>
+    <!-- <link rel="shortcut icon" href="・・・" >
+<link rel="stylesheet" href="・・・"> -->
+    <link rel="stylesheet"
+        href="file:///c%3A/Users/taishu_wakasugi/Desktop/WorkSpace/%E5%8B%9D%E6%89%8B/%E3%83%9E%E3%83%BC%E3%82%AF%E3%83%80%E3%82%A6%E3%83%B3/MJS%E8%B3%87%E6%96%99/github-markdown.css"
+        type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" type="text/css">
+    <link rel="stylesheet" href="kaiseki.css" type="text/css">
+</head>
+
+<body>
+    <!-- <form name="test">
+        <input type="file" id="selfile"><br>
+        <textarea name="txt" rows="10" cols="40" readonly></textarea>
+    </form>
+    <div id = "Result_element"></div>
+    <form name="test">
+        <input type="file" id="selfile"><br>
+        <textarea name="txt" rows="10" cols="40" readonly></textarea>
+    </form>
+    <div id = "Result_element"></div> -->
+
+
+    <div class="cp_qa">
+
+        <input id="cp_conttab1" class="inVisible" type="radio" name="tabs" checked >
+        <label for="cp_conttab1" class="cp_tabitem">ファイル選択・プレビュー</label>
+        <input id="cp_conttab2" class="inVisible" type="radio" name="tabs">
+        <label for="cp_conttab2" class="cp_tabitem">関数・コンポーネント一覧</label>
+        <input id="cp_conttab3" class="inVisible" type="radio" name="tabs">
+        <label for="cp_conttab3" class="cp_tabitem">関数</label>
+        <input id="cp_conttab4" class="inVisible" type="radio" name="tabs">
+        <label for="cp_conttab4" class="cp_tabitem">コンポーネント（デザイン）</label>
+
+        <div id="cp_content1">
+
+            <p>
+            <form name="test">
+                <input type="file" id="selfile"><br>
+                <textarea name="txt" rows="10" cols="40" readonly></textarea>
+            </form>
+            <div id="Result_element"></div>
+            </p>
+        </div>
+        <div id="cp_content2">
+            <p>説明テキスト 説明テキスト 説明テキスト</p>
+            <input id="sortA" name ="sort" type="radio">
+            <label for="sortA">一覧</label>
+            <input id="sortC" name ="sort"  type="radio">
+            <label for="sortC">コンポーネントのみ</label>
+            <input id="sortP" name ="sort"  type="radio">
+            <label for="sortP">プロセスのみ</label>
+            <input id="sortO" name ="sort"  type="radio">
+            <label for="sortO">その他</label>
+            <div class="cp_qain" id="category2">
+
+            </div>
+        </div>
+        <div id="cp_content3">
+            <p>説明テキスト 説明テキスト 説明テキスト</p>
+            <div class="cp_qain">
+                <div class="BLOCK">
+                    <input id="cp_tabfour056" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour056">質問テキスト</label>
+                    <div class="BLOCK-content">答えテキスト</div>
+                </div>
+                <div class="BLOCK">
+                    <input id="cp_tabfour057" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour057">質問テキスト 質問テキスト</label>
+                    <div class="BLOCK-content">答えテキスト</div>
+                </div>
+            </div>
+        </div>
+        <div id="cp_content4">
+            <p>説明テキスト 説明テキスト 説明テキスト</p>
+            <div class="cp_qain">
+                <div class="BLOCK">
+                    <input id="cp_tabfour058" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour058">質問テキスト</label>
+                    <div class="BLOCK-content">答えテキスト</div>
+                </div>
+                <div class="BLOCK">
+                    <input id="cp_tabfour059" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour059">質問テキスト 質問テキスト</label>
+                    <div class="BLOCK-content">答えテキスト</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="kaiseki.js"></script>
+</body>
+
+</html>
