@@ -3,8 +3,12 @@ var BunsekiString = document.test.txt;
 var str;
 var Bunseki_element = document.getElementById("Result_element");
 var b = 0;
-var a = 0;
-var Content = [];
+var a = 0;    
+var cut1       = [];//コード内容と、説明文に分ける
+var ExplainB   = "";//説明文内容
+var Expalin    = [];//説明文達の配列
+var ContentB   = "";//コンテンツ内容
+var Content    = [];//コンテンツ達の配列
 var LineCnt = [];
 var AllLineCnt = 0;
 
@@ -27,17 +31,13 @@ obj1.addEventListener(
     false);
 
 function Bunkai(str) {
-    var cut1 = [];
-    var ExplainB = "";
-    var Expalin = [];
-    var ContentB = "";
-    
+
     cut1 = str.split("************************************************************************\n");
 
     for (var i = 0; i < cut1.length - 1; i++) {
         if (i % 2 == 0) {
             Content[a] = cut1[i+2];
-            //console.log(Content[a]);
+            
             ContentB = Content[a];
             CBunseki(ContentB);
             a++;
@@ -48,7 +48,7 @@ function Bunkai(str) {
             Expalin[b] = Expalin[b].replace(/[//*]/g, '');
             Expalin[b] = Expalin[b].replace(/[//**]/g, '');
 
-            console.log(b, "個目");
+            //console.log(b, "個目");
             ExplainB = Expalin[b];
             Bunseki(ExplainB);
 
@@ -60,6 +60,8 @@ function Bunkai(str) {
 function CBunseki(ContentB) {
     var ContentChild = [];
     ContentChild = ContentB.split("\n");
+    if(a==0)//最初のコンテンツのみ、宣言分析関数を使う。
+     SengenBunseki(ContentChild);
     LineCnt[a] = ContentChild.length - 1;
 }
 
@@ -108,14 +110,14 @@ function Bunseki(ExplainB) {
 
     //-------------------------------------コンポーネントとプロセスとその他に分類する------------------------------------------------------------
 
-    console.log(ExplainChild[0]);
+    //console.log(ExplainChild[0]);
     if (ExplainChild[0].includes('Proccess') === true) {
         BLOCKCreate.className = BLOCKCreate.className + ' Proccess_list';//クラスを指定
-        console.log("プロセス");
+        //console.log("プロセス");
     }
     else if (ExplainChild[0].includes('Component') === true) {
         BLOCKCreate.className = BLOCKCreate.className + ' Component_list';//クラスを指定
-        console.log("コンポネート");
+        //console.log("コンポネート");
     }
     else {
         BLOCKCreate.className = BLOCKCreate.className + ' Sonota_list';//クラスを指定 
@@ -124,4 +126,74 @@ function Bunseki(ExplainB) {
     //console.log(RESULT[i]); 
 
 };
+
+function SengenBunseki(ContentChild){
+    var SENGENcheck;
+    for(var i =0 ;i < ContentChild.length;i++)
+    {
+        ContentChild[i]=ContentChild[i].trim();
+        if(ContentChild[i].toUpperCase().startsWith('CONST')=== true)
+        {
+            SENGENcheck="Const";
+        }
+        else if(ContentChild[i].toUpperCase().startsWith('TYPE')=== true)
+        {
+            SENGENcheck="Type";
+        }
+        else if(ContentChild[i].toUpperCase().startsWith('PUBLIC')=== true)
+        {
+            SENGENcheck="Public";
+        }
+        else if(ContentChild[i].toUpperCase().startsWith('PRIVATE')=== true)
+        {
+            SENGENcheck="Private";
+        }
+        else if(ContentChild[i].toUpperCase().startsWith('FUNCTION')=== true)
+        {
+            SENGENcheck="Function";
+        }
+        else if(ContentChild[i].toUpperCase().startsWith('PROCEDURE')=== true)
+        {
+            SENGENcheck="Procedure";
+        }
+        console.log(ContentChild[i]);//確認
+        if (SENGENcheck==="Const"){
+            ContentChild[i]
+            var Const_listCreate = document.createElement('li');//li要素作成
+            Const_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Const_list.appendChild(Const_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck==="Type"){
+            ContentChild[i]
+            var Type_listCreate = document.createElement('li');//li要素作成
+            Type_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Type_list.appendChild(Type_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck==="Public"){
+            ContentChild[i]
+            var Public_listCreate = document.createElement('li');//li要素作成
+            Public_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Public_list.appendChild(Public_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck==="Private"){
+            ContentChild[i]
+            var Private_listCreate = document.createElement('li');//li要素作成
+            Private_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Private_list.appendChild(Private_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck==="Function"){
+            ContentChild[i]
+            var Function_listCreate = document.createElement('li');//li要素作成
+            Function_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Function_list.appendChild(Function_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck==="Procedure"){
+            ContentChild[i]
+            var Procedure_listCreate = document.createElement('li');//li要素作成
+            Procedure_listCreate.textContent = ContentChild[i];//表示文字列を指定
+            Procedure_list.appendChild(Procedure_listCreate);//配置場所を指定
+        }
+    }
+  
+}
 
