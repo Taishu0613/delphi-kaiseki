@@ -1,3 +1,4 @@
+"use strict";
 var obj1 = document.getElementById("selfile");
 var BunsekiString = document.test.txt;
 var str;
@@ -11,6 +12,9 @@ var ContentB   = "";//コンテンツ内容
 var Content    = [];//コンテンツ達の配列
 var LineCnt = [];
 var AllLineCnt = 0;
+var Comment_;
+var Surash;
+var CommentCreate;
 
 //ダイアログでファイルが選択された時
 obj1.addEventListener(
@@ -39,7 +43,7 @@ function Bunkai(str) {
             Content[a] = cut1[i+2];
             
             ContentB = Content[a];
-            CBunseki(ContentB);
+            ContentBunseki(ContentB);
             a++;
         }
         else if (i % 2 == 1) {
@@ -51,27 +55,28 @@ function Bunkai(str) {
             //console.log(b, "個目");
             ExplainB = Expalin[b];
             Bunseki(ExplainB);
-
             b++;
         }
     }
 };
-
-function CBunseki(ContentB) {
+//*****************************************************************************************************************
+//コンテンツを分析
+//***************************************************************************************************************** 
+function ContentBunseki(ContentB) {
     var ContentChild = [];
     ContentChild = ContentB.split("\n");
-    if(a==0)//最初のコンテンツのみ、宣言分析関数を使う。
-     SengenBunseki(ContentChild);
+    //最初のコンテンツのみ、宣言分析関数を使う。
+    if (a == 0)
+        SengenBunseki(ContentChild);
     LineCnt[a] = ContentChild.length - 1;
+
 }
 
-
+//*****************************************************************************************************************
+//説明文を分析
+//***************************************************************************************************************** 
 function Bunseki(ExplainB) {
-    var RESULT = [];
     var ExplainChild = [];
-    var ContentChildSplit = [];
-    var c, d = 0;
-    var ENames, Econtents = [];
 
     ExplainChild = ExplainB.split("\n");
     ExplainChild[0] = ExplainChild[0].trim();
@@ -95,7 +100,7 @@ function Bunseki(ExplainB) {
     //-------見出し作成------------
     var TitleLabel = document.createElement('label');//label要素作成
     TitleLabel.htmlFor = b + "title";//Forを指定
-    TitleLabel.textContent = ExplainChild[0] + " " +  AllLineCnt + " " + LineCnt[b];//表示文字列を指定
+    TitleLabel.textContent = ExplainChild[0] + " " + AllLineCnt + " " + LineCnt[b];//表示文字列を指定
     AllLineCnt = AllLineCnt + (ExplainChild.length + LineCnt[b] + 2);
     BLOCKCreate.appendChild(TitleLabel);//配置場所を指定
     //-------コンテンツ作成------------
@@ -123,77 +128,85 @@ function Bunseki(ExplainB) {
         BLOCKCreate.className = BLOCKCreate.className + ' Sonota_list';//クラスを指定 
     }
 
-    //console.log(RESULT[i]); 
 
 };
+//-----------------コンテンツのコードとコメントを区別する関数-----------------------------------------------------------
+function CommentOutBunri(i, ContentChild) {
 
-function SengenBunseki(ContentChild){
-    var SENGENcheck;
-    for(var i =0 ;i < ContentChild.length;i++)
-    {
-        ContentChild[i]=ContentChild[i].trim();
-        if(ContentChild[i].toUpperCase().startsWith('CONST')=== true)
-        {
-            SENGENcheck="Const";
-        }
-        else if(ContentChild[i].toUpperCase().startsWith('TYPE')=== true)
-        {
-            SENGENcheck="Type";
-        }
-        else if(ContentChild[i].toUpperCase().startsWith('PUBLIC')=== true)
-        {
-            SENGENcheck="Public";
-        }
-        else if(ContentChild[i].toUpperCase().startsWith('PRIVATE')=== true)
-        {
-            SENGENcheck="Private";
-        }
-        else if(ContentChild[i].toUpperCase().startsWith('FUNCTION')=== true)
-        {
-            SENGENcheck="Function";
-        }
-        else if(ContentChild[i].toUpperCase().startsWith('PROCEDURE')=== true)
-        {
-            SENGENcheck="Procedure";
-        }
-        console.log(ContentChild[i]);//確認
-        if (SENGENcheck==="Const"){
-            ContentChild[i]
-            var Const_listCreate = document.createElement('li');//li要素作成
-            Const_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Const_list.appendChild(Const_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck==="Type"){
-            ContentChild[i]
-            var Type_listCreate = document.createElement('li');//li要素作成
-            Type_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Type_list.appendChild(Type_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck==="Public"){
-            ContentChild[i]
-            var Public_listCreate = document.createElement('li');//li要素作成
-            Public_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Public_list.appendChild(Public_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck==="Private"){
-            ContentChild[i]
-            var Private_listCreate = document.createElement('li');//li要素作成
-            Private_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Private_list.appendChild(Private_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck==="Function"){
-            ContentChild[i]
-            var Function_listCreate = document.createElement('li');//li要素作成
-            Function_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Function_list.appendChild(Function_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck==="Procedure"){
-            ContentChild[i]
-            var Procedure_listCreate = document.createElement('li');//li要素作成
-            Procedure_listCreate.textContent = ContentChild[i];//表示文字列を指定
-            Procedure_list.appendChild(Procedure_listCreate);//配置場所を指定
-        }
+    //[i]番目の行にコメントアウトがある場合、コメントアウト部分のみ抜き出す。
+    if (ContentChild[i].includes('//')) {
+        Surash = ContentChild[i].indexOf('//'); //ダブルスラッシュの位置の数字を抜き出す
+        Comment_ = ContentChild[i].substring(Surash + 2);//ダブルスラッシュ以降の文字を抽出
+        ContentChild[i] = ContentChild[i].replace('//' + Comment_, "");//コメントを文字列から削除
+        CommentCreate = document.createElement('span');//div要素作成
+        CommentCreate.className = 'Comment_list';//Classを指定
+        CommentCreate.textContent = Comment_;//表示文字列を指定
+        console.log(i, Comment_);//確認　
     }
-  
+}
+//-------------------------------------宣言部分を分類する関数------------------------------------------------------------
+function SengenBunseki(ContentChild) {
+    var SENGENcheck;
+    var Comment_Boolean;
+    for (var i = 0; i < ContentChild.length; i++)//一行ずつ特定の言葉を含んでいないか検査
+    {
+        ContentChild[i] = ContentChild[i].trim();
+        if (ContentChild[i].includes('//')) {
+            CommentOutBunri(i, ContentChild);
+            Comment_Boolean = true;
+        }
+        //[i]番目の行　検査開始
+        if (ContentChild[i].toUpperCase().startsWith('CONST') === true) {
+            SENGENcheck = "Const";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('TYPE') === true) {
+            SENGENcheck = "Type";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PUBLIC') === true) {
+            SENGENcheck = "Public";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PRIVATE') === true) {
+            SENGENcheck = "Private";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('FUNCTION') === true) {
+            SENGENcheck = "Function";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PROCEDURE') === true) {
+            SENGENcheck = "Procedure";
+        }
+        //[i]番目の行　検査終了
+
+        //続いてHTMLに配置
+        var Sengen_listCreate = document.createElement('li');//li要素作成
+        Sengen_listCreate.textContent = ContentChild[i];//表示文字列を指定
+
+        //続いてHTMLに配置
+        if (SENGENcheck === "Const") {
+            Const_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Type") {
+            Type_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Public") {
+            Public_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Private") {
+            Private_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Function") {
+            Function_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Procedure") {
+            Procedure_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        //コメントが含まれている場合のみ配置
+
+        if (Comment_Boolean) {
+            Sengen_listCreate.appendChild(CommentCreate);//配置場所を指定
+            Comment_Boolean = false;
+        }
+
+    }
+
 }
 
