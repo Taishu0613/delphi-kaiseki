@@ -87,7 +87,8 @@
 .cp_qa input:checked+label[for*='4'] {
 	border-top: 5px solid #E91E63;
 }
-
+/****************************画面変更に伴うUI変更********************************* */
+/* 上のタブアイコン表示に変更（） */
 @media screen and (max-width: 900px) {
 	.cp_qa label.cp_tabitem {
 		font-size: 0;
@@ -98,7 +99,7 @@
 		margin: 0;
 	}
 }
-
+/* 更に隙間減らす */
 @media screen and (max-width: 400px) {
 	.cp_qa label.cp_tabitem {
 		padding: 15px;
@@ -108,7 +109,18 @@
 		margin-right: 0px;
 	}
 }
+/* 宣言欄のタブ二・三層化 */
+/* .cp_qain div:nth-of-type(2n-1) {
+	float: left;
+	color: red;
+}
 
+.cp_qain div:nth-of-type(2n) {
+	clear: both;
+}
+
+*/
+/****************************画面変更に伴うUI変更終わり********************************* */
 /* ヘッダータブ切り替え */
 .cp_qa #cp_conttab1:checked~#cp_content1,
 .cp_qa #cp_conttab2:checked~#cp_content2,
@@ -132,7 +144,8 @@
 }
 
 .Component_list,
-.Proccess_list {
+.Proccess_list,
+.Sengen_list {
 	background-color: #cccccc77;
 	-webkit-transition: all 0.3s ease;
 	-moz-transition: all 0.3s ease;
@@ -197,4 +210,23 @@
 /* リスト黒点非表示 */
 li {
 	list-style: none;
+}
+/* ---------------コメントアウト用CSS--------------- */
+.Comment_list {
+	display: inline-block;
+	outline: 0;
+	cursor: pointer;
+	text-align: center;
+	border: 0;
+	padding: 3px 16px;
+	color: #ffffff;
+	background: #008060;
+	border-radius: 6px;
+	font-weight: 500;
+	font-size: 12px;
+	/* box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 0px 0px, rgba(0, 0, 0, 0.2) 0px -1px 0px 0px inset; */
+}
+
+.Comment_list:hover {
+	background: #006e52;
 }
