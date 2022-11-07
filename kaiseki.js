@@ -100,8 +100,8 @@ function Bunseki(ExplainB) {
     //-------見出し作成------------
     var TitleLabel = document.createElement('label');//label要素作成
     TitleLabel.htmlFor = b + "title";//Forを指定
-    TitleLabel.textContent = ExplainChild[0] + " " + AllLineCnt + " " + LineCnt[b];//表示文字列を指定
-    AllLineCnt = AllLineCnt + (ExplainChild.length + LineCnt[b] + 2);
+    TitleLabel.textContent = ExplainChild[0] + " " +  AllLineCnt + " " + LineCnt[b];//表示文字列を指定
+    AllLineCnt = AllLineCnt + (ExplainChild.length + LineCnt[b] + 1);
     BLOCKCreate.appendChild(TitleLabel);//配置場所を指定
     //-------コンテンツ作成------------
     var BLOCK_ContentCreate = document.createElement('label');//label要素作成
@@ -128,8 +128,42 @@ function Bunseki(ExplainB) {
         BLOCKCreate.className = BLOCKCreate.className + ' Sonota_list';//クラスを指定 
     }
 
-
 };
+
+//-------------------------------------------------ソート--------------------------------------------------
+//document.getElementById("sortC").addEventListener("change",aaa());
+function SortCode(){
+    var checkedC = document.getElementById("sortCompornent").checked;
+    var checkedP = document.getElementById("sortProcess").checked;
+    var checkedO = document.getElementById("sortOther").checked;
+    var checked = document.getElementById("sortAll").checked;
+    var aa = document.querySelectorAll(".Proccess_list, .Component_list, .Sonota_list");
+    var cc = document.querySelectorAll(".Proccess_list, .Sonota_list");
+    var pp = document.querySelectorAll(".Component_list, .Sonota_list");
+    var oo = document.querySelectorAll(".Proccess_list, .Component_list");
+    //if(checked){
+        for(var i=0;i < aa.length;i++){
+            aa[i].style.display = "block";
+        }
+    //}
+    if(checkedC == true){
+        for(var i=0;i < cc.length;i++){
+            cc[i].style.display = "none";
+        }
+    }
+    if(checkedP == true){
+        for(var i=0;i < pp.length;i++){
+            pp[i].style.display = "none";
+        }
+    }
+    if(checkedO == true){
+        for(var i=0;i < oo.length;i++){
+            oo[i].style.display = "none";
+        }
+    }
+}
+
+
 //-----------------コンテンツのコードとコメントを区別する関数-----------------------------------------------------------
 function CommentOutBunri(i, ContentChild) {
 
@@ -209,4 +243,5 @@ function SengenBunseki(ContentChild) {
     }
 
 }
+
 
