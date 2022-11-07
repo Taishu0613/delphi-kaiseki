@@ -11,9 +11,6 @@
     <title>デルファイ解析</title>
     <!-- <link rel="shortcut icon" href="・・・" >
 <link rel="stylesheet" href="・・・"> -->
-    <link rel="stylesheet"
-        href="file:///c%3A/Users/taishu_wakasugi/Desktop/WorkSpace/%E5%8B%9D%E6%89%8B/%E3%83%9E%E3%83%BC%E3%82%AF%E3%83%80%E3%82%A6%E3%83%B3/MJS%E8%B3%87%E6%96%99/github-markdown.css"
-        type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" type="text/css">
     <link rel="stylesheet" href="kaiseki.css" type="text/css">
 </head>
@@ -38,7 +35,7 @@
         <input id="cp_conttab2" class="inVisible" type="radio" name="tabs">
         <label for="cp_conttab2" class="cp_tabitem">関数・コンポーネント一覧</label>
         <input id="cp_conttab3" class="inVisible" type="radio" name="tabs">
-        <label for="cp_conttab3" class="cp_tabitem">関数</label>
+        <label for="cp_conttab3" class="cp_tabitem">宣言・変更履歴</label>
         <input id="cp_conttab4" class="inVisible" type="radio" name="tabs">
         <label for="cp_conttab4" class="cp_tabitem">コンポーネント（デザイン）</label>
 
@@ -62,26 +59,52 @@
             <label for="sortProcess">プロセスのみ</label>
             <input id="sortOther" name ="sort"  type="radio" onchange="SortCode()">
             <label for="sortOther">その他</label>
+
             <div class="cp_qain" id="category2">
 
             </div>
         </div>
         <div id="cp_content3">
-            <p>説明テキスト 説明テキスト 説明テキスト</p>
+            <p>変更履歴</p>
             <div class="cp_qain">
-                <div class="BLOCK">
+                <div class="BLOCK Sengen_list">
                     <input id="cp_tabfour056" type="checkbox" name="tabs">
                     <div class="cp_plus">+</div>
-                    <label for="cp_tabfour056">質問テキスト</label>
-                    <div class="BLOCK-content">答えテキスト</div>
+                    <label for="cp_tabfour056">Const 変更できない変数</label>
+                    <div class="BLOCK-content"id = "Const_list"></div>
                 </div>
-                <div class="BLOCK">
+                <div class="BLOCK Sengen_list">
                     <input id="cp_tabfour057" type="checkbox" name="tabs">
                     <div class="cp_plus">+</div>
-                    <label for="cp_tabfour057">質問テキスト 質問テキスト</label>
-                    <div class="BLOCK-content">答えテキスト</div>
+                    <label for="cp_tabfour057">Type 構造化変数</label>
+                    <div class="BLOCK-content"id = "Type_list"></div>
+                </div>
+                <div class="BLOCK Sengen_list">
+                    <input id="cp_tabfour058" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour058">Public このページ以外でも使える変数</label>
+                    <div class="BLOCK-content"id = "Public_list"></div>
+                </div>
+                <div class="BLOCK Sengen_list">
+                    <input id="cp_tabfour059" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour059">Private このページ内で使える変数</label>
+                    <div class="BLOCK-content"id = "Private_list"></div>
+                </div>
+                <div class="BLOCK Sengen_list">
+                    <input id="cp_tabfour060" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour060">Function 返り値がある関数</label>
+                    <div class="BLOCK-content"id = "Function_list"></div>
+                </div>
+                <div class="BLOCK Sengen_list">
+                    <input id="cp_tabfour061" type="checkbox" name="tabs">
+                    <div class="cp_plus">+</div>
+                    <label for="cp_tabfour061">Procedure 返り値がない関数</label>
+                    <div class="BLOCK-content"id = "Procedure_list"></div>
                 </div>
             </div>
+            <div id = "const_list"></div>
         </div>
         <div id="cp_content4">
             <p>説明テキスト 説明テキスト 説明テキスト</p>
