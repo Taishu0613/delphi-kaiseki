@@ -126,11 +126,11 @@ function Bunseki(ExplainB) {
 };
 //-------------------------------------------------ソート--------------------------------------------------
 //document.getElementById("sortC").addEventListener("change",aaa());
-function aaa(){
-    var checkedC = document.getElementById("sortC").checked;
-    var checkedP = document.getElementById("sortP").checked;
-    var checkedO = document.getElementById("sortO").checked;
-    var checked = document.getElementById("sortA").checked;
+function SortCode(){
+    var checkedC = document.getElementById("sortCompornent").checked;
+    var checkedP = document.getElementById("sortProcess").checked;
+    var checkedO = document.getElementById("sortOther").checked;
+    var checked = document.getElementById("sortAll").checked;
     var aa = document.querySelectorAll(".Proccess_list, .Component_list, .Sonota_list");
     var cc = document.querySelectorAll(".Proccess_list, .Sonota_list");
     var pp = document.querySelectorAll(".Component_list, .Sonota_list");
@@ -153,15 +153,6 @@ function aaa(){
     if(checkedO == true){
         for(var i=0;i < oo.length;i++){
             oo[i].style.display = "none";
-        }
-    }
-}
-function bbb(){
-    var checked = document.getElementById("sortA").checked;
-    var aa = document.querySelectorAll(".Proccess_list, .Component_list, .Sonota_list");
-    if(checked){
-        for(var i=0;i < aa.length;i++){
-            aa[i].style.display = "block";
         }
     }
 }
