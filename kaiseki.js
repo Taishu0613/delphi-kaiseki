@@ -4,7 +4,9 @@ var BunsekiString = document.test.txt;
 var str;
 var Bunseki_element = document.getElementById("Result_element");
 var b = 0;
-var a = 0;    
+var a = 0;
+var CodeInfo = {};
+var CodeAllInfo = [];
 var cut1       = [];//コード内容と、説明文に分ける
 var ExplainB   = "";//説明文内容
 var Expalin    = [];//説明文達の配列
@@ -53,6 +55,10 @@ function Bunkai(str) {
             Expalin[b] = Expalin[b].replace(/[//**]/g, '');
 
             //console.log(b, "個目");
+            if(b === 0){
+                console.log(b)
+                HenkouLog(Expalin[0])
+            }
             ExplainB = Expalin[b];
             Bunseki(ExplainB);
             b++;
@@ -69,6 +75,86 @@ function ContentBunseki(ContentB) {
     if (a == 0)
         SengenBunseki(ContentChild);
     LineCnt[a] = ContentChild.length - 1;
+
+}
+
+//-----------------コンテンツのコードとコメントを区別する関数-----------------------------------------------------------
+function CommentOutBunri(i, ContentChild) {
+
+    //[i]番目の行にコメントアウトがある場合、コメントアウト部分のみ抜き出す。
+    if (ContentChild[i].includes('//')) {
+        Surash = ContentChild[i].indexOf('//'); //ダブルスラッシュの位置の数字を抜き出す
+        Comment_ = ContentChild[i].substring(Surash + 2);//ダブルスラッシュ以降の文字を抽出
+        ContentChild[i] = ContentChild[i].replace('//' + Comment_, "");//コメントを文字列から削除
+        CommentCreate = document.createElement('span');//div要素作成
+        CommentCreate.className = 'Comment_list';//Classを指定
+        CommentCreate.textContent = Comment_;//表示文字列を指定
+        //console.log(i, Comment_);//確認　
+    }
+}
+//-------------------------------------宣言部分を分類する関数------------------------------------------------------------
+function SengenBunseki(ContentChild) {
+    var SENGENcheck;
+    var Comment_Boolean;
+    for (var i = 0; i < ContentChild.length; i++)//一行ずつ特定の言葉を含んでいないか検査
+    {
+        ContentChild[i] = ContentChild[i].trim();
+        if (ContentChild[i].includes('//')) {
+            CommentOutBunri(i, ContentChild);
+            Comment_Boolean = true;
+        }
+        //[i]番目の行　検査開始
+        if (ContentChild[i].toUpperCase().startsWith('CONST') === true) {
+            SENGENcheck = "Const";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('TYPE') === true) {
+            SENGENcheck = "Type";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PUBLIC') === true) {
+            SENGENcheck = "Public";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PRIVATE') === true) {
+            SENGENcheck = "Private";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('FUNCTION') === true) {
+            SENGENcheck = "Function";
+        }
+        else if (ContentChild[i].toUpperCase().startsWith('PROCEDURE') === true) {
+            SENGENcheck = "Procedure";
+        }
+        //[i]番目の行　検査終了
+
+        //続いてHTMLに配置
+        var Sengen_listCreate = document.createElement('li');//li要素作成
+        Sengen_listCreate.textContent = ContentChild[i];//表示文字列を指定
+
+        //続いてHTMLに配置
+        if (SENGENcheck === "Const") {
+            Const_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Type") {
+            Type_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Public") {
+            Public_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Private") {
+            Private_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Function") {
+            Function_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        if (SENGENcheck === "Procedure") {
+            Procedure_list.appendChild(Sengen_listCreate);//配置場所を指定
+        }
+        //コメントが含まれている場合のみ配置
+
+        if (Comment_Boolean) {
+            Sengen_listCreate.appendChild(CommentCreate);//配置場所を指定
+            Comment_Boolean = false;
+        }
+
+    }
 
 }
 
@@ -163,85 +249,29 @@ function SortCode(){
     }
 }
 
-
-//-----------------コンテンツのコードとコメントを区別する関数-----------------------------------------------------------
-function CommentOutBunri(i, ContentChild) {
-
-    //[i]番目の行にコメントアウトがある場合、コメントアウト部分のみ抜き出す。
-    if (ContentChild[i].includes('//')) {
-        Surash = ContentChild[i].indexOf('//'); //ダブルスラッシュの位置の数字を抜き出す
-        Comment_ = ContentChild[i].substring(Surash + 2);//ダブルスラッシュ以降の文字を抽出
-        ContentChild[i] = ContentChild[i].replace('//' + Comment_, "");//コメントを文字列から削除
-        CommentCreate = document.createElement('span');//div要素作成
-        CommentCreate.className = 'Comment_list';//Classを指定
-        CommentCreate.textContent = Comment_;//表示文字列を指定
-        console.log(i, Comment_);//確認　
-    }
-}
-//-------------------------------------宣言部分を分類する関数------------------------------------------------------------
-function SengenBunseki(ContentChild) {
-    var SENGENcheck;
-    var Comment_Boolean;
-    for (var i = 0; i < ContentChild.length; i++)//一行ずつ特定の言葉を含んでいないか検査
+//--------------------------変更履歴を分析する--------------------------
+function HenkouLog(SystemExplain){
+    var SystemExplainChild = [];
+    var L=0;
+    var LogArray=[];
+    SystemExplainChild = SystemExplain.split("\n");
+    for(var i = 0; i < SystemExplainChild.length; i++)
     {
-        ContentChild[i] = ContentChild[i].trim();
-        if (ContentChild[i].includes('//')) {
-            CommentOutBunri(i, ContentChild);
-            Comment_Boolean = true;
-        }
-        //[i]番目の行　検査開始
-        if (ContentChild[i].toUpperCase().startsWith('CONST') === true) {
-            SENGENcheck = "Const";
-        }
-        else if (ContentChild[i].toUpperCase().startsWith('TYPE') === true) {
-            SENGENcheck = "Type";
-        }
-        else if (ContentChild[i].toUpperCase().startsWith('PUBLIC') === true) {
-            SENGENcheck = "Public";
-        }
-        else if (ContentChild[i].toUpperCase().startsWith('PRIVATE') === true) {
-            SENGENcheck = "Private";
-        }
-        else if (ContentChild[i].toUpperCase().startsWith('FUNCTION') === true) {
-            SENGENcheck = "Function";
-        }
-        else if (ContentChild[i].toUpperCase().startsWith('PROCEDURE') === true) {
-            SENGENcheck = "Procedure";
-        }
-        //[i]番目の行　検査終了
-
-        //続いてHTMLに配置
-        var Sengen_listCreate = document.createElement('li');//li要素作成
-        Sengen_listCreate.textContent = ContentChild[i];//表示文字列を指定
-
-        //続いてHTMLに配置
-        if (SENGENcheck === "Const") {
-            Const_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck === "Type") {
-            Type_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck === "Public") {
-            Public_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck === "Private") {
-            Private_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck === "Function") {
-            Function_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        if (SENGENcheck === "Procedure") {
-            Procedure_list.appendChild(Sengen_listCreate);//配置場所を指定
-        }
-        //コメントが含まれている場合のみ配置
-
-        if (Comment_Boolean) {
-            Sengen_listCreate.appendChild(CommentCreate);//配置場所を指定
-            Comment_Boolean = false;
+        SystemExplainChild[i] = SystemExplainChild[i].trim();
+        var LogBoolean = SystemExplainChild[i].match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
+        //'<>'が含まれる場合
+        if (LogBoolean!=null)
+        {
+            LogArray[L]=LogBoolean[0];
+            console.log(SystemExplainChild[i])
+            console.log(LogBoolean)
         }
 
     }
+    return LogArray[SystemExplainChild.length];
 
 }
+
+
 
 
