@@ -4,7 +4,9 @@ var BunsekiString = document.test.txt;
 var str;
 var Bunseki_element = document.getElementById("Result_element");
 var b = 0;
-var a = 0;    
+var a = 0;
+var CodeInfo = {};
+var CodeAllInfo = [];
 var cut1       = [];//コード内容と、説明文に分ける
 var ExplainB   = "";//説明文内容
 var Expalin    = [];//説明文達の配列
@@ -250,15 +252,24 @@ function SortCode(){
 //--------------------------変更履歴を分析する--------------------------
 function HenkouLog(SystemExplain){
     var SystemExplainChild = [];
+    var L=0;
+    var LogArray=[];
     SystemExplainChild = SystemExplain.split("\n");
-    for(var i = 0; i < SystemExplainChild.length; i++){
+    for(var i = 0; i < SystemExplainChild.length; i++)
+    {
         SystemExplainChild[i] = SystemExplainChild[i].trim();
-        var LogBoolean = SystemExplainChild[i].match(/\<.*?\>/g);//正規表現を使いで’<>’が含まれる場合tureにする
-        if (LogBoolean!=null){
-        console.log(SystemExplainChild[i])
-        console.log(LogBoolean)
+        var LogBoolean = SystemExplainChild[i].match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
+        //'<>'が含まれる場合
+        if (LogBoolean!=null)
+        {
+            LogArray[L]=LogBoolean[0];
+            console.log(SystemExplainChild[i])
+            console.log(LogBoolean)
         }
+
     }
+    return LogArray[SystemExplainChild.length];
+
 }
 
 
