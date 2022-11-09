@@ -52,12 +52,12 @@
 
 .cp_qa label.cp_tabitem[for*='3']:before {
 	font-family: 'FontAwesome', sans-serif;
-	content: '\f121';
+	content: '\e53d';
 }
 
 .cp_qa label.cp_tabitem[for*='4']:before {
 	font-family: 'FontAwesome', sans-serif;
-	content: '\f53f';
+	content: '\f891';
 }
 
 .cp_qa label.cp_tabitem:hover {
