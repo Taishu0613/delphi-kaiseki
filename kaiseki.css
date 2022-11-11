@@ -187,6 +187,8 @@
 .cp_qa .cp_qain .BLOCK-content {
 	position: relative;
 	overflow: hidden;
+	font-size:  13px;
+	font-weight:bold;
 	height: 0;
 	margin: 0 10px 0 48px;
 	padding: 14px 0;
