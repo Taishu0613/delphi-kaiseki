@@ -187,7 +187,7 @@ function Bunseki(ExplainB) {
     var TitleLabel = document.createElement('label');//label要素作成
     TitleLabel.htmlFor = b + "title";//Forを指定
     TitleLabel.textContent = ExplainChild[0] + " " +  AllLineCnt + " " + LineCnt[b];//表示文字列を指定
-    AllLineCnt = AllLineCnt + (ExplainChild.length + LineCnt[b] + 1);
+    AllLineCnt = AllLineCnt + (ExplainChild.length + LineCnt[b] + 2);
     BLOCKCreate.appendChild(TitleLabel);//配置場所を指定
     //-------コンテンツ作成------------
     var BLOCK_ContentCreate = document.createElement('label');//label要素作成
@@ -271,7 +271,6 @@ function HenkouLog(SystemExplain){
     return LogArray[SystemExplainChild.length];
 
 }
-
 
 
 
