@@ -203,6 +203,12 @@
 	opacity: 1;
 }
 
+.cp_qa #cp_content3 .cp_qain .BLOCK input[type=checkbox]:checked~.BLOCK-content {
+	height: 400px;
+	overflow:scroll;
+	opacity: 1;
+}
+
 /* 質問をクリックした時の▼アイコンの動き */
 .cp_qa .cp_qain .BLOCK input[type=checkbox]:checked~.cp_plus {
 	-webkit-transform: rotate(45deg);
@@ -335,4 +341,21 @@ li {
 	left: 0;
 	pointer-events: none;
 	opacity: 0.5;
+  }
+
+
+/* ーーーーーーーーーーーーーーーーーーーーーーーーーー宣言UI多段化ーーーーーーーーーーーーーーーーーーーーーーーー */
+
+@media screen and (min-width: 2100px) {
+.Sengen_list {
+	float: left;
+	width: 30%;
 }
+}
+
+@media screen and (min-width: 1400px) {
+.Sengen_list {
+		float: left;
+		width: 45%;
+	}
+
