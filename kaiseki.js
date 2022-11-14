@@ -370,5 +370,5 @@ function SengenBunseki(ContentChild) {
     if (ContentChild.Comment != "")
         Sengen_listCreate.appendChild(CommentCreate);//配置場所を指定
 
-
 }
+
