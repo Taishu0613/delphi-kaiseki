@@ -12,6 +12,7 @@
     <!-- <link rel="shortcut icon" href="・・・" >
 <link rel="stylesheet" href="・・・"> -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" type="text/css">
+    <!-- <link rel="stylesheet" href="コードハイライト\github-dark-dimmed.min.css" type="text/css"> -->
     <link rel="stylesheet" href="コードハイライト\a11y-dark.min.css" type="text/css">
     <link rel="stylesheet" href="kaiseki.css" type="text/css">
 </head>
@@ -118,16 +119,15 @@
                 <label class="Select_selectlabel">変更履歴</label>
             </div>
             <div id="HenkouLog">
-            
             </div>
-            <p><input type="button"value="出力"></p>
+            <p><input type="button" value="出力" onclick="hljs.initHighlightingOnLoad()"></p>
  
         </div>
     </div>
 
     <script src="kaiseki.js"></script>
     <script src="コードハイライト\highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
+    <script>hljs.initHighlightingOnLoad(); </script>
 </body>
 
 </html>

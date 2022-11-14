@@ -263,21 +263,19 @@ function SelectLogHyouzi() {
     console.log(LogArray);
 
     for (var i = 0; i < LogArray.length; i++) {
-        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)//前の配列が今と違うログポイントだったら、グループ化
+        //前の配列が今と違うログポイントだったら、グループ化（同ログポイントの最初）
+        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
         {
-            //コードハイライトの準備-----------------------------------------------------------------
             var highlight = document.createElement('pre');
             HenkouLog_element.appendChild(highlight);
             var highlight2 = document.createElement('code');
             highlight2.className = "delphi";
             highlight.appendChild(highlight2);
-            //コードハイライトの準備-----------------------------------------------------------------
         }
-
-        highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].Line + " " + LogArray[i].String;//表示文字列を指定
-
+        highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].Line + " " + LogArray[i].String;//文字列を作成していく
+        //次の配列が今と違うログポイントだったら一旦作成。（同ログポイントの最後）
     }
-
+    hljs.initHighlightingOnLoad();
 }
 //*****************************************************************************************************************
 //*****************************************************************************************************************

@@ -359,3 +359,16 @@ li {
 		width: 45%;
 	}
 
+}
+.post {
+	margin: 20px;
+	padding: 30px 0;
+	background: #fff;
+}
+
+code {
+	/* margin: 30px 0; */
+	font-size: 16px;
+	border-radius: 10px;
+	/*角の丸み*/
+}
