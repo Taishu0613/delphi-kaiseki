@@ -15,13 +15,13 @@ code.hljs {
 
   Based on the Tomorrow Night Eighties theme: https://github.com/isagalaev/highlight.js/blob/master/src/styles/tomorrow-night-eighties.css
 */.hljs {
-  background: #2b2b2b;
-  color: #f8f8f2
+  background: #2d2f32;
+  color: #fff9f0
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: #009771
+  color: #bce784
 }
 
 .hljs-deletion,
@@ -42,7 +42,7 @@ code.hljs {
 .hljs-number,
 .hljs-params,
 .hljs-type {
-  color: #f5ab35
+  color: #ff7faa
 }
 
 .hljs-attribute {
@@ -53,7 +53,7 @@ code.hljs {
 .hljs-bullet,
 .hljs-string,
 .hljs-symbol {
-  color: #d4d0ab
+  color: #7faaff
 }
 
 .hljs-section,
@@ -63,7 +63,7 @@ code.hljs {
 
 .hljs-keyword,
 .hljs-selector-tag {
-  color: #dcc6e0
+  color: #ffe0be
 }
 
 .hljs-emphasis {
