@@ -368,7 +368,28 @@ li {
 
 code {
 	/* margin: 30px 0; */
-	font-size: 16px;
+	font-size: 14px;
+		line-height: 1.2;
 	border-radius: 10px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	/*角の丸み*/
+}
+.HenkouLog_elementChild {
+	/* margin: 30px 0; */
+	font-size: 14px;
+	line-height: 1.2;
+	border-radius: 10px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	/* 角の丸み */
+	display: flex;
+	flex-direction: column-reverse;
+	/* 縦並び逆順 */
+}
+
+.Codelog {
+	float: left;
+}
+
+.LineNo {
+	float: left;
 }
