@@ -62,7 +62,7 @@ function Bunkai(str) {
             }
         }
 //----------------------------------------説明文とコンテンツ切替処理終了--------------------------------------------------------------------------------
-        //-------------------------------------CodeAInfoを作成しCodeAllInfoに格納------------------------------------------------------------------
+        //-------------------------------------CodeInfoを作成しCodeAllInfoに格納------------------------------------------------------------------
         if (Mode == "コンテンツ")//コンテンツモードの場合
         {
             CodeInfo.Mode = "コンテンツ"//モード：コンテンツと記録する
@@ -229,17 +229,25 @@ function HenkouKensaku(LogID) {
         for (var b = 0; b < Content.length; b++) {//コンテンツの行を一つずつ調べる
             var ContentChild = Content[b];
             if (ContentChild.String.includes(LogID) && ContentChild.String.startsWith("//")) {
-
-                if (BeginEnd) {
+                var DelREIGAI = (ContentChild.String.match(/\/\//g) || []).length;
+                //　文字列に"//"が２つ以上のときはDELと認識し、一行だけ抜き出す。
+                if (DelREIGAI === 1) {
+                    if (BeginEnd) {
+                        ContentChild.LogID = LogID;
+                        ContentChild.LogIDPoint = LogIDPoint;
+                    }
+                    BeginEnd = !BeginEnd;//判定反転
+                    if (BeginEnd === false) {
+                        LogIDPoint++;
+                    }
+                }
+                else {
                     ContentChild.LogID = LogID;
                     ContentChild.LogIDPoint = LogIDPoint;
-                }
-                BeginEnd = !BeginEnd;//判定反転
-                if (BeginEnd === false) {
                     LogIDPoint++;
                 }
             }
-            else if (ContentChild.String.includes(LogID)) {
+            else if (ContentChild.String.includes(LogID)) {//ログＩDが文字の最初ではないときは1行だけ抜き出す。
                 ContentChild.LogID = LogID;
                 ContentChild.LogIDPoint = LogIDPoint;
                 LogIDPoint++;
@@ -254,9 +262,9 @@ function HenkouKensaku(LogID) {
 function SelectLogHyouzi() {
     var HenkouLog_element = document.getElementById("HenkouLog");
     while (HenkouLog_element.lastChild) {
-        HenkouLog_element.removeChild(HenkouLog_element.lastChild);//初期化
+        HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
     }
-    // selectタグを取得する
+    // selectタグを取得する（コンボボックスに履歴追加）
     var select = document.getElementById("LogSelect").value;
     console.log(select);
     var LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
@@ -266,15 +274,15 @@ function SelectLogHyouzi() {
         //前の配列が今と違うログポイントだったら、グループ化（同ログポイントの最初）
         if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
         {
-            var HenkouLog_elementChild = document.createElement('div');
-            HenkouLog_elementChild.className = "HenkouLog_elementChild";
-            HenkouLog_element.appendChild(HenkouLog_elementChild);
+            var HenkouLog_Child = document.createElement('div');
+            HenkouLog_Child.className = "HenkouLog_Child";
+            HenkouLog_element.appendChild(HenkouLog_Child);
             var LineNo = document.createElement('div');
             LineNo.className = "LineNo";
-            HenkouLog_elementChild.appendChild(LineNo);
+            HenkouLog_Child.appendChild(LineNo);
             var highlight = document.createElement('pre');
             highlight.className = "Codelog";
-            HenkouLog_elementChild.appendChild(highlight);
+            HenkouLog_Child.appendChild(highlight);
             var highlight2 = document.createElement('code');
             highlight2.className = "delphi";
             highlight.appendChild(highlight2);
@@ -283,7 +291,10 @@ function SelectLogHyouzi() {
         LineNo2.className = "LineNoChild";
         LineNo2.textContent = LogArray[i].Line;
         LineNo.appendChild(LineNo2);
-        highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
+        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
+            highlight2.textContent = LogArray[i].String;//文字列を作成していく
+        else
+            highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
     }
     hljs.initHighlightingOnLoad();
 }

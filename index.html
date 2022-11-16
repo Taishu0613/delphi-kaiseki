@@ -118,6 +118,17 @@
                 <span class="Select_selectbar"></span>
                 <label class="Select_selectlabel">変更履歴</label>
             </div>
+            <div class="cp_ipselect">
+                <select id="LogSelect" class="Select" required onchange="SelectLogHyouzi()">
+                    <option value="" hidden disabled selected></option>
+                    <option value="1">変更した関数別に分類して表示する（変更点のみ）</option>
+                    <option value="1">変更した関数別に分類して表示する（関数全体）</option>
+                    <option value="1">プレーンテキストから表示する</option>
+                </select>
+                <span class="Select_highlight"></span>
+                <span class="Select_selectbar"></span>
+                <label class="Select_selectlabel">表示方法</label>
+            </div>
             <div id="HenkouLog">
             </div>
             <p><input type="button" value="出力" onclick="hljs.initHighlightingOnLoad()"></p>
