@@ -1,12 +1,12 @@
 pre code.hljs {
   display: block;
   overflow-x: auto;
-  padding: 1em
-}
-
+  padding: 12px;
+  }
 code.hljs {
   padding: 3px 5px
 }
+
 
 /*!
   Theme: a11y-dark
