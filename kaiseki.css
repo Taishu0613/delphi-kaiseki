@@ -359,3 +359,42 @@ li {
 		width: 45%;
 	}
 
+}
+/* .post {
+	margin: 20px;
+	padding: 30px 0;
+	background: #fff;
+}
+
+*/
+code {
+	/* margin: 30px 0; */
+	font-size: 14px;
+	border-radius: 10px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	line-height: 1.2;
+	/*角の丸み*/
+}
+.HenkouLog_Child {
+	overflow-x: auto;
+	background: #2d2f32;
+	color: #fff9f0;
+	font-size: 14px;
+	margin: 12px;
+	border-radius: 10px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	/* 角の丸み */
+	display: flex;
+}
+
+/* .Codelog {
+	float: left;
+	line-height: 1.2;
+}
+
+*/
+.LineNo {
+	margin: 14px;
+		padding-top: 12px;
+		line-height: 1.2;
+}
