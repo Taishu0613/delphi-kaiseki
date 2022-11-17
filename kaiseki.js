@@ -17,6 +17,10 @@ var Surash;
 var CommentCreate;
 var SENGENcheck;
 var Comment_Boolean;
+var KaKuNiNpoint = 0;
+var LogArray;
+var KaKuNiN_TUUKA;
+var KaKuNiN_list;
 console.log("解析準備完了");
 
 //ダイアログでファイルが選択された時
@@ -267,11 +271,11 @@ function SelectLogHyouzi() {
     // selectタグを取得する（コンボボックスに履歴追加）
     var select = document.getElementById("LogSelect").value;
     console.log(select);
-    var LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
+    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
 
     for (var i = 0; i < LogArray.length; i++) {
-        //前の配列が今と違うログポイントだったら、グループ化（同ログポイントの最初）
+        //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
         if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
         {
             var HenkouLog_Child = document.createElement('div');
@@ -287,6 +291,7 @@ function SelectLogHyouzi() {
             highlight2.className = "delphi";
             highlight.appendChild(highlight2);
         }
+        LogKaKuNiN(i, HenkouLog_Child);
         var LineNo2 = document.createElement('li');
         LineNo2.className = "LineNoChild";
         LineNo2.textContent = LogArray[i].Line;
@@ -297,6 +302,40 @@ function SelectLogHyouzi() {
             highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
     }
     hljs.initHighlightingOnLoad();
+}
+
+function LogKaKuNiN(i, HenkouLog_Child) {
+    if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {//ログポイントが切り替わったら確認フィールドを作成
+        var KAKUNINstring = "";
+        KaKuNiN_list = document.createElement('div');
+        KaKuNiN_list.className = "KaKuNiN_list";
+        HenkouLog_Child.appendChild(KaKuNiN_list);
+        KaKuNiN_TUUKA = false;//確認通過リセット
+    }
+    if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false || KaKuNiN_TUUKA === false && LogArray[i].String.startsWith("//") === false) {
+        KaKuNiNpoint++;
+        var KaKuNiN = document.createElement('div');
+        KaKuNiN.className = "KaKuNiN";
+        KaKuNiN_list.appendChild(KaKuNiN);
+        var KaKuNiN_child = document.createElement('li');
+        KaKuNiN_child.className = "KaKuNiN_child";
+        KaKuNiN.appendChild(KaKuNiN_child);
+        if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
+            KAKUNINstring = "分岐確認";
+            var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
+            KaKuNiN_child2.className = "KaKuNiN_child2";
+            KaKuNiN.appendChild(KaKuNiN_child2);
+            KaKuNiN_TUUKA = true;//確認通過
+        }
+        else if (KaKuNiN_TUUKA === false) {
+            KAKUNINstring = "通過確認";
+            KaKuNiN_TUUKA = true;//確認通過
+        }
+        KaKuNiN.textContent = "No" + KaKuNiNpoint + "  " + KAKUNINstring;
+    }
+
+
+
 }
 //*****************************************************************************************************************
 //*****************************************************************************************************************
