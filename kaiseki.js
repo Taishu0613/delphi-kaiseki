@@ -34,8 +34,9 @@ obj1.addEventListener(
         reader.readAsText(file[0]);
         //読込終了後の処理
         reader.onload = function (ev) { //テキストエリアに表示する
-            BunsekiString.value = reader.result;
-            str = BunsekiString.value;
+            str = reader.result;
+            //str=str.replace(/[\t]/,"    ");//インデントを記録する方法
+            BunsekiString.value = str;
             Bunkai(str);
             
         }
@@ -48,7 +49,8 @@ function Bunkai(str) {
     for(var i = 0; i < strsplit.length; i++){
         var CodeInfo = {};
         CodeInfo.Line=i;//コードの行数を記録
-        CodeInfo.String=strsplit[i].trim();//コードの文字列を記録
+        CodeInfo.String=strsplit[i];
+        //CodeInfo.String=strsplit[i].trim();//コードの文字列を記録
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
 //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
         if(CodeInfo.String.includes("************************************************************************")===true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
@@ -264,6 +266,7 @@ function HenkouKensaku(LogID) {
     }
 }
 function SelectLogHyouzi() {
+    KaKuNiNpoint=0;
     var HenkouLog_element = document.getElementById("HenkouLog");
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
@@ -306,7 +309,7 @@ function SelectLogHyouzi() {
 
 function LogKaKuNiN(i, HenkouLog_Child) {
     if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {//ログポイントが切り替わったら確認フィールドを作成
-        var KAKUNINstring = "";
+        var KAKUNINChild_string = "";
         KaKuNiN_list = document.createElement('div');
         KaKuNiN_list.className = "KaKuNiN_list";
         HenkouLog_Child.appendChild(KaKuNiN_list);
@@ -319,19 +322,22 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         KaKuNiN_list.appendChild(KaKuNiN);
         var KaKuNiN_child = document.createElement('li');
         KaKuNiN_child.className = "KaKuNiN_child";
+        KaKuNiN_child.contentEditable = true;
         KaKuNiN.appendChild(KaKuNiN_child);
         if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
-            KAKUNINstring = "分岐確認";
+            KAKUNINChild_string = "分岐確認";
             var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
             KaKuNiN_child2.className = "KaKuNiN_child2";
+            KaKuNiN_child2.contentEditable = true;
             KaKuNiN.appendChild(KaKuNiN_child2);
             KaKuNiN_TUUKA = true;//確認通過
         }
         else if (KaKuNiN_TUUKA === false) {
-            KAKUNINstring = "通過確認";
+            console.log(LogArray[i]);
+            KAKUNINChild_string = "通過確認";
             KaKuNiN_TUUKA = true;//確認通過
         }
-        KaKuNiN.textContent = "No" + KaKuNiNpoint + "  " + KAKUNINstring;
+        KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNINChild_string;
     }
 
 
