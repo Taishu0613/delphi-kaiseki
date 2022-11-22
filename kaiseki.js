@@ -201,7 +201,7 @@ function SortCode(){
         }
     }
 }
-//--------------------------変更履歴を分析する--------------------------
+//--------------------------変更履歴コンボボックス作成--------------------------
 function HenkouLog(SystemExplain) {
     var L = 0;
     var LogID;
@@ -267,32 +267,43 @@ function HenkouKensaku(LogID) {
         }
     }
 }
+//ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
 function SelectLogHyouzi() {
     KaKuNiNpoint=0;
     var HenkouLog_element = document.getElementById("HenkouLog");
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
     }
-    // selectタグを取得する（コンボボックスに履歴追加）
+    // selectタグを取得する（コンボボックスの履歴IDから検索）
     var select = document.getElementById("LogSelect").value;
     console.log(select);
     LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
+    var preBlockNo;//今いる関数名を一次的に記憶
 
     for (var i = 0; i < LogArray.length; i++) {
         //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
         if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
         {
-            var HenkouLog_Child = document.createElement('div');
+            if (i == 0 || LogArray[i].BlockNo != preBlockNo) {//前回のログポイントと違う関数だったら関数名を表示
+                var LogContent = CodeInfoArray.filter((CodeInfo) => CodeInfo.BlockNo === LogArray[i].BlockNo && CodeInfo.Mode === "コンテンツ");
+                var HenkouLog_ChildName = document.createElement('div');//関数名を表示
+                HenkouLog_ChildName.className = "HenkouLog_ChildName";
+                HenkouLog_ChildName.textContent = LogContent[1].String;
+                HenkouLog_element.appendChild(HenkouLog_ChildName);
+                preBlockNo = LogArray[i].BlockNo;//今いる関数名を一次的に記憶
+            }
+
+            var HenkouLog_Child = document.createElement('div');//変更ログの一つをフィールドを作成
             HenkouLog_Child.className = "HenkouLog_Child";
             HenkouLog_element.appendChild(HenkouLog_Child);
-            var LineNo = document.createElement('div');
+            var LineNo = document.createElement('div');//行エリア生成
             LineNo.className = "LineNo";
             HenkouLog_Child.appendChild(LineNo);
-            var highlight = document.createElement('pre');
+            var highlight = document.createElement('pre');//コードエリア生成
             highlight.className = "Codelog";
             HenkouLog_Child.appendChild(highlight);
-            var highlight2 = document.createElement('code');
+            var highlight2 = document.createElement('code');//コードエリア生成２
             highlight2.className = "delphi";
             highlight.appendChild(highlight2);
         }
@@ -308,7 +319,7 @@ function SelectLogHyouzi() {
     }
     hljs.initHighlightingOnLoad();
 }
-
+//赤枠の確認欄作成ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 function LogKaKuNiN(i, HenkouLog_Child) {
     if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {//ログポイントが切り替わったら確認フィールドを作成
         var KAKUNIN_childstring = "";
@@ -317,30 +328,48 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         HenkouLog_Child.appendChild(KaKuNiN_list);
         KaKuNiN_TUUKA = false;//確認通過リセット
     }
-    if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false || KaKuNiN_TUUKA === false && LogArray[i].String.startsWith("//") === false) {
-        KaKuNiNpoint++;
-        var KaKuNiN = document.createElement('div');
-        KaKuNiN.className = "KaKuNiN";
-        KaKuNiN_list.appendChild(KaKuNiN);
-        var KaKuNiN_child = document.createElement('li');
-        KaKuNiN_child.className = "KaKuNiN_child";
-        KaKuNiN_child.contentEditable = true;
-        KaKuNiN.appendChild(KaKuNiN_child);
-        if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
-            KAKUNIN_childstring = "分岐確認";
-            var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
-            KaKuNiN_child2.className = "KaKuNiN_child2";
-            KaKuNiN_child2.contentEditable = true;
-            KaKuNiN_child2.textContent = "XXXの値が（True,False）で分岐"
-            KaKuNiN.appendChild(KaKuNiN_child2);
-            KaKuNiN_TUUKA = true;//確認通過
+    if (LogArray[i].String.trim().startsWith("//") === false || LogArray[i].String.trim().startsWith("{")) {//コメントアウトされてないもの
+        if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
+            KaKuNiNpoint++;
+            var KaKuNiN = document.createElement('div');
+            KaKuNiN.className = "KaKuNiN";
+            KaKuNiN_list.appendChild(KaKuNiN);
+            var KaKuNiN_child = document.createElement('li');
+            KaKuNiN_child.className = "KaKuNiN_child";
+            KaKuNiN_child.contentEditable = true;
+            KaKuNiN.appendChild(KaKuNiN_child);
+            if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
+                KAKUNIN_childstring = "分岐確認";
+                var ifXXX = LogArray[i].String.trim().split(/ |\t/);//文章を更に細かく空白とタブ文字で分離
+                var XXX = ifXXX[1];//条件文を抽出
+                var A = "True"
+                var B = "False"
+                var IN = 0;
+                if (ifXXX[0] === "else" || ifXXX[1].includes('not'))//配列が一つずれる例外処理
+                    IN = 1;
+                if (ifXXX[3 + IN] != undefined) {
+                    if (/[\<\>\=]/.test(ifXXX[2 + IN]) === true && ifXXX[3 + IN].toLowerCase().includes("true" || "false") === false) {
+                        XXX = ifXXX[1 + IN];
+                        A = ifXXX[3 + IN];
+                        A = A.replace(')', "");
+                        A = A.replace('then', "");
+                        B = "?"
+                    }
+                }
+                var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
+                KaKuNiN_child2.className = "KaKuNiN_child2";
+                KaKuNiN_child2.contentEditable = true;
+                KaKuNiN_child2.textContent = XXX + "の値が（" + A + "," + B + "）で分岐";
+                KaKuNiN.appendChild(KaKuNiN_child2);
+                KaKuNiN_TUUKA = true;//確認通過
+            }
+            else if (KaKuNiN_TUUKA === false) {
+                //console.log(LogArray[i]);
+                KAKUNIN_childstring = "通過確認";
+                KaKuNiN_TUUKA = true;//確認通過
+            }
+            KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
         }
-        else if (KaKuNiN_TUUKA === false) {
-            console.log(LogArray[i]);
-            KAKUNIN_childstring = "通過確認";
-            KaKuNiN_TUUKA = true;//確認通過
-        }
-        KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
     }
 
 
