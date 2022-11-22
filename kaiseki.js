@@ -17,6 +17,10 @@ var Surash;
 var CommentCreate;
 var SENGENcheck;
 var Comment_Boolean;
+var KaKuNiNpoint = 0;
+var LogArray;
+var KaKuNiN_TUUKA;
+var KaKuNiN_list;
 console.log("解析準備完了");
 
 //ダイアログでファイルが選択された時
@@ -30,9 +34,11 @@ obj1.addEventListener(
         reader.readAsText(file[0]);
         //読込終了後の処理
         reader.onload = function (ev) { //テキストエリアに表示する
-            BunsekiString.value = reader.result;
-            str = BunsekiString.value;
+            str = reader.result;
+            //str=str.replace(/[\t]/,"    ");//インデントを記録する方法
+            BunsekiString.value = str;
             Bunkai(str);
+            hljs.initHighlightingOnLoad();
             
         }
     },
@@ -43,8 +49,10 @@ function Bunkai(str) {
     strsplit=str.split("\n");//全てのコードを改行で配列に組み込む
     for(var i = 0; i < strsplit.length; i++){
         var CodeInfo = {};
-        CodeInfo.Line=i;//コードの行数を記録
-        CodeInfo.String=strsplit[i].trim();//コードの文字列を記録
+        CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
+        //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
+        CodeInfo.Line = i;//コードの行数を記録
+
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
 //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
         if(CodeInfo.String.includes("************************************************************************")===true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
@@ -198,7 +206,7 @@ function HenkouLog(SystemExplain) {
     var L = 0;
     var LogID;
     for (var i = 0; i < SystemExplain.length; i++) {
-        SystemExplain[i].String = SystemExplain[i].String.trim();
+        //SystemExplain[i].String = SystemExplain[i].String.trim();
         var LogBoolean = SystemExplain[i].String.match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
         //'<>'が含まれる場合
         if (LogBoolean != null) {
@@ -260,6 +268,7 @@ function HenkouKensaku(LogID) {
     }
 }
 function SelectLogHyouzi() {
+    KaKuNiNpoint=0;
     var HenkouLog_element = document.getElementById("HenkouLog");
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
@@ -267,11 +276,11 @@ function SelectLogHyouzi() {
     // selectタグを取得する（コンボボックスに履歴追加）
     var select = document.getElementById("LogSelect").value;
     console.log(select);
-    var LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
+    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
 
     for (var i = 0; i < LogArray.length; i++) {
-        //前の配列が今と違うログポイントだったら、グループ化（同ログポイントの最初）
+        //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
         if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
         {
             var HenkouLog_Child = document.createElement('div');
@@ -287,6 +296,7 @@ function SelectLogHyouzi() {
             highlight2.className = "delphi";
             highlight.appendChild(highlight2);
         }
+        LogKaKuNiN(i, HenkouLog_Child);
         var LineNo2 = document.createElement('li');
         LineNo2.className = "LineNoChild";
         LineNo2.textContent = LogArray[i].Line;
@@ -297,6 +307,44 @@ function SelectLogHyouzi() {
             highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
     }
     hljs.initHighlightingOnLoad();
+}
+
+function LogKaKuNiN(i, HenkouLog_Child) {
+    if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {//ログポイントが切り替わったら確認フィールドを作成
+        var KAKUNIN_childstring = "";
+        KaKuNiN_list = document.createElement('div');
+        KaKuNiN_list.className = "KaKuNiN_list";
+        HenkouLog_Child.appendChild(KaKuNiN_list);
+        KaKuNiN_TUUKA = false;//確認通過リセット
+    }
+    if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false || KaKuNiN_TUUKA === false && LogArray[i].String.startsWith("//") === false) {
+        KaKuNiNpoint++;
+        var KaKuNiN = document.createElement('div');
+        KaKuNiN.className = "KaKuNiN";
+        KaKuNiN_list.appendChild(KaKuNiN);
+        var KaKuNiN_child = document.createElement('li');
+        KaKuNiN_child.className = "KaKuNiN_child";
+        KaKuNiN_child.contentEditable = true;
+        KaKuNiN.appendChild(KaKuNiN_child);
+        if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
+            KAKUNIN_childstring = "分岐確認";
+            var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
+            KaKuNiN_child2.className = "KaKuNiN_child2";
+            KaKuNiN_child2.contentEditable = true;
+            KaKuNiN_child2.textContent = "XXXの値が（True,False）で分岐"
+            KaKuNiN.appendChild(KaKuNiN_child2);
+            KaKuNiN_TUUKA = true;//確認通過
+        }
+        else if (KaKuNiN_TUUKA === false) {
+            console.log(LogArray[i]);
+            KAKUNIN_childstring = "通過確認";
+            KaKuNiN_TUUKA = true;//確認通過
+        }
+        KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
+    }
+
+
+
 }
 //*****************************************************************************************************************
 //*****************************************************************************************************************
