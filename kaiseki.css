@@ -367,6 +367,10 @@ li {
 }
 
 */
+body {
+	tab-size: 4;
+	-moz-tab-size: 4;
+}
 code {
 	/* margin: 30px 0; */
 	font-size: 14px;
@@ -395,13 +399,12 @@ code {
 */
 .LineNo {
 	margin: 14px;
-		padding-top: 12px;
+	padding-top: 12px;
 		line-height: 1.2;
 }
 
 .KaKuNiN {
 	border: solid medium #ce363b;
-
 	color: #fff9f0;
 	margin: 3px;
 	padding: 3px;
