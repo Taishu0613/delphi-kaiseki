@@ -34,14 +34,9 @@ obj1.addEventListener(
         reader.readAsText(file[0]);
         //読込終了後の処理
         reader.onload = function (ev) { //テキストエリアに表示する
-<<<<<<< HEAD
-            Bunseki_element.textContent = reader.result;
-            str = Bunseki_element.textContent;
-=======
             str = reader.result;
             //str=str.replace(/[\t]/,"    ");//インデントを記録する方法
             BunsekiString.value = str;
->>>>>>> 1799825fb2f23b681386919d9bd2a2b0cab9c2d7
             Bunkai(str);
             hljs.initHighlightingOnLoad();
             
@@ -54,14 +49,10 @@ function Bunkai(str) {
     strsplit=str.split("\n");//全てのコードを改行で配列に組み込む
     for(var i = 0; i < strsplit.length; i++){
         var CodeInfo = {};
-        CodeInfo.Line=i;//コードの行数を記録
-<<<<<<< HEAD
         CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
         //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
-=======
-        CodeInfo.String=strsplit[i];
-        //CodeInfo.String=strsplit[i].trim();//コードの文字列を記録
->>>>>>> 1799825fb2f23b681386919d9bd2a2b0cab9c2d7
+        CodeInfo.Line = i;//コードの行数を記録
+
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
 //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
         if(CodeInfo.String.includes("************************************************************************")===true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
@@ -320,11 +311,7 @@ function SelectLogHyouzi() {
 
 function LogKaKuNiN(i, HenkouLog_Child) {
     if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {//ログポイントが切り替わったら確認フィールドを作成
-<<<<<<< HEAD
         var KAKUNIN_childstring = "";
-=======
-        var KAKUNINChild_string = "";
->>>>>>> 1799825fb2f23b681386919d9bd2a2b0cab9c2d7
         KaKuNiN_list = document.createElement('div');
         KaKuNiN_list.className = "KaKuNiN_list";
         HenkouLog_Child.appendChild(KaKuNiN_list);
@@ -338,8 +325,6 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         var KaKuNiN_child = document.createElement('li');
         KaKuNiN_child.className = "KaKuNiN_child";
         KaKuNiN_child.contentEditable = true;
-<<<<<<< HEAD
-
         KaKuNiN.appendChild(KaKuNiN_child);
         if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
             KAKUNIN_childstring = "分岐確認";
@@ -347,30 +332,15 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child2.className = "KaKuNiN_child2";
             KaKuNiN_child2.contentEditable = true;
             KaKuNiN_child2.textContent = "XXXの値が（True,False）で分岐"
-=======
-        KaKuNiN.appendChild(KaKuNiN_child);
-        if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
-            KAKUNINChild_string = "分岐確認";
-            var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
-            KaKuNiN_child2.className = "KaKuNiN_child2";
-            KaKuNiN_child2.contentEditable = true;
->>>>>>> 1799825fb2f23b681386919d9bd2a2b0cab9c2d7
             KaKuNiN.appendChild(KaKuNiN_child2);
             KaKuNiN_TUUKA = true;//確認通過
         }
         else if (KaKuNiN_TUUKA === false) {
-<<<<<<< HEAD
+            console.log(LogArray[i]);
             KAKUNIN_childstring = "通過確認";
             KaKuNiN_TUUKA = true;//確認通過
         }
         KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
-=======
-            console.log(LogArray[i]);
-            KAKUNINChild_string = "通過確認";
-            KaKuNiN_TUUKA = true;//確認通過
-        }
-        KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNINChild_string;
->>>>>>> 1799825fb2f23b681386919d9bd2a2b0cab9c2d7
     }
 
 
