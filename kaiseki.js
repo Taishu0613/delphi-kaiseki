@@ -52,9 +52,8 @@ function Bunkai(str) {
         CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
         //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
         CodeInfo.Line = i;//コードの行数を記録
-
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
-//----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
+        //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
         if(CodeInfo.String.includes("************************************************************************")===true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
         {   
             if(Mode==="なし")//Modeの初期値は”なし”
@@ -69,7 +68,7 @@ function Bunkai(str) {
                 Mode="コンテンツ";//コンテンツモード
             }
         }
-//----------------------------------------説明文とコンテンツ切替処理終了--------------------------------------------------------------------------------
+        //----------------------------------------説明文とコンテンツ切替処理終了--------------------------------------------------------------------------------
         //-------------------------------------CodeInfoを作成しCodeAllInfoに格納------------------------------------------------------------------
         if (Mode == "コンテンツ")//コンテンツモードの場合
         {
@@ -328,7 +327,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         HenkouLog_Child.appendChild(KaKuNiN_list);
         KaKuNiN_TUUKA = false;//確認通過リセット
     }
-    if (LogArray[i].String.trim().startsWith("//") === false || LogArray[i].String.trim().startsWith("{")) {//コメントアウトされてないもの
+    if (LogArray[i].String.trim().startsWith("//") === false && LogArray[i].String.trim().startsWith("{") === false) {//コメントアウトされてないもの
         if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
             KaKuNiNpoint++;
             var KaKuNiN = document.createElement('div');
@@ -338,31 +337,42 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child.className = "KaKuNiN_child";
             KaKuNiN_child.contentEditable = true;
             KaKuNiN.appendChild(KaKuNiN_child);
+            //以下分岐の処理
             if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
                 KAKUNIN_childstring = "分岐確認";
-                var ifXXX = LogArray[i].String.trim().split(/ |\t/);//文章を更に細かく空白とタブ文字で分離
-                var XXX = ifXXX[1];//条件文を抽出
-                var A = "True"
-                var B = "False"
-                var IN = 0;
-                if (ifXXX[0] === "else" || ifXXX[1].includes('not'))//配列が一つずれる例外処理
-                    IN = 1;
-                if (ifXXX[3 + IN] != undefined) {
-                    if (/[\<\>\=]/.test(ifXXX[2 + IN]) === true && ifXXX[3 + IN].toLowerCase().includes("true" || "false") === false) {
-                        XXX = ifXXX[1 + IN];
-                        A = ifXXX[3 + IN];
-                        A = A.replace(')', "");
-                        A = A.replace('then', "");
-                        B = "?"
-                    }
+                var ifString = LogArray[i].String.trim().replace(/\t/, " ");//タブ文字を空白に変換
+                if (/if not /i.test(ifString) === true) {//if Not の場合
+                    var XXXbegin = ifString.search(/if not[\( ]/i) + 7;
+                }
+                else {
+                    var XXXbegin = ifString.search(/if[\( ]/) + 3;
+                }
+                var XXXend = ifString.search(/[\) ](then|AND|OR|\<|\>|\=)/i);
+                //substring()で指定した文字以降を切り出し。
+                var XXX = ifString.substring(XXXbegin, XXXend);
+                var A = "True";
+                var B = "False";
+                var C = "";
+
+                if (ifString.search(/( \<| \>| \=)/) != -1 && ifString.search(/true|false/i) === -1) {//書き換える
+                    var Abegin = ifString.search(/(\< |\> |\= )/);
+                    var Aend = ifString.search(/[\) ](then|AND|OR)/i);
+                    A = ifString.substring(Abegin + 2, Aend);
+                    A = A.replace(')', "");
+                    A = A.replace('then', "");
+                    B = "?";
+                }
+                if (ifString.search(/[\) ](AND|OR)/i) != -1) {//ANDかORが含まれていた場合
+                    C = "\nまたは、かつ";
                 }
                 var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
                 KaKuNiN_child2.className = "KaKuNiN_child2";
                 KaKuNiN_child2.contentEditable = true;
-                KaKuNiN_child2.textContent = XXX + "の値が（" + A + "," + B + "）で分岐";
+                KaKuNiN_child2.textContent = XXX + "の値が（" + A + "," + B + "）で分岐" + C;
                 KaKuNiN.appendChild(KaKuNiN_child2);
                 KaKuNiN_TUUKA = true;//確認通過
             }
+            //以下通過の処理
             else if (KaKuNiN_TUUKA === false) {
                 //console.log(LogArray[i]);
                 KAKUNIN_childstring = "通過確認";
@@ -371,9 +381,6 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
         }
     }
-
-
-
 }
 //*****************************************************************************************************************
 //*****************************************************************************************************************
