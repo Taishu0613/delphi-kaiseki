@@ -346,17 +346,23 @@ li {
 
 /* ーーーーーーーーーーーーーーーーーーーーーーーーーー宣言UI多段化ーーーーーーーーーーーーーーーーーーーーーーーー */
 
+/*.flex_Sengen_box{
+	display:flex;
+	flex-wrap: wrap;
+}*/
+
 @media screen and (min-width: 2100px) {
 .Sengen_list {
-	float: left;
 	width: 30%;
+	align-self: flex-start;
 }
 }
 
 @media screen and (min-width: 1400px) {
 .Sengen_list {
-		float: left;
-		width: 45%;
+	/*width: 100%;*/
+	display:flex;
+	align-self: flex-start;
 	}
 
 }
