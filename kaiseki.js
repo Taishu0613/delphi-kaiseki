@@ -269,6 +269,10 @@ function HenkouKensaku(LogID) {
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
 function SelectLogHyouzi() {
     KaKuNiNpoint=0;
+    new LeaderLine(
+        document.getElementById('LogSelect'),
+        document.getElementById('HenkouLog')
+    );
     var HenkouLog_element = document.getElementById("HenkouLog");
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
@@ -332,6 +336,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiNpoint++;
             var KaKuNiN = document.createElement('div');
             KaKuNiN.className = "KaKuNiN";
+            KaKuNiN.id = KaKuNiNpoint;
             KaKuNiN_list.appendChild(KaKuNiN);
             var KaKuNiN_child = document.createElement('li');
             KaKuNiN_child.className = "KaKuNiN_child";
