@@ -354,14 +354,18 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                 var B = "False";
                 var C = "";
 
-                if (ifString.search(/( \<| \>| \=)/) != -1 && ifString.search(/true|false/i) === -1) {//書き換える
+                if (ifString.search(/( \<| \>| \=)/) != -1 && ifString.search(/true/i) === -1) {//書き換える
                     var Abegin = ifString.search(/(\< |\> |\= )/);
                     var Aend = ifString.search(/[\) ](then|AND|OR)/i);
                     A = ifString.substring(Abegin + 2, Aend);
                     A = A.replace(')', "");
                     A = A.replace('then', "");
                     B = "?";
+                    if (ifString.search(/false/i) === -1) {
+                        B = "True";
+                    }
                 }
+
                 if (ifString.search(/[\) ](AND|OR)/i) != -1) {//ANDかORが含まれていた場合
                     C = "\nまたは、かつ";
                 }
