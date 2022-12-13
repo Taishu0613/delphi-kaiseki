@@ -1,6 +1,6 @@
 .cp_qa *, .cp_qa *:before, .cp_qa *:after {
 	-webkit-box-sizing: border-box;
-	        box-sizing: border-box;
+    box-sizing        : border-box;
 }
 
 .cp_qa {
