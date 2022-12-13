@@ -12,6 +12,8 @@
     <!-- <link rel="shortcut icon" href="・・・" >
 <link rel="stylesheet" href="・・・"> -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.2.0/css/all.css" type="text/css">
+    <!-- <link rel="stylesheet" href="コードハイライト\github-dark-dimmed.min.css" type="text/css"> -->
+    <link rel="stylesheet" href="コードハイライト\a11y-dark.min.css" type="text/css">
     <link rel="stylesheet" href="kaiseki.css" type="text/css">
 </head>
 
@@ -35,9 +37,9 @@
         <input id="cp_conttab2" class="inVisible" type="radio" name="tabs">
         <label for="cp_conttab2" class="cp_tabitem">関数・コンポーネント一覧</label>
         <input id="cp_conttab3" class="inVisible" type="radio" name="tabs">
-        <label for="cp_conttab3" class="cp_tabitem">宣言・変更履歴</label>
+        <label for="cp_conttab3" class="cp_tabitem">宣言一覧</label>
         <input id="cp_conttab4" class="inVisible" type="radio" name="tabs">
-        <label for="cp_conttab4" class="cp_tabitem">コンポーネント（デザイン）</label>
+        <label for="cp_conttab4" class="cp_tabitem">単体テスト用エビデンス</label>
 
         <div id="cp_content1">
 
@@ -46,8 +48,8 @@
                 <input type="file" id="selfile"><br>
                 <textarea name="txt" rows="10" cols="40" readonly></textarea>
             </form>
-            <div id="Result_element"></div>
-            </p>
+            <pre><code id="Result_element"class="delphi"></code></pre>
+            </pre>
         </div>
         <div id="cp_content2">
             <p>説明テキスト 説明テキスト 説明テキスト</p>
@@ -59,7 +61,7 @@
             <label for="sortProcess">プロセスのみ</label>
             <input id="sortOther" name ="sort"  type="radio" onchange="SortCode()">
             <label for="sortOther">その他</label>
-
+            
             <div class="cp_qain" id="category2">
 
             </div>
@@ -70,7 +72,7 @@
                 <div class="BLOCK Sengen_list">
                     <input id="cp_tabfour056" type="checkbox" name="tabs">
                     <div class="cp_plus">+</div>
-                    <label for="cp_tabfour056">Const 変更できない変数</label>
+                    <label for="cp_tabfour056">Const 変更できない定数</label>
                     <div class="BLOCK-content"id = "Const_list"></div>
                 </div>
                 <div class="BLOCK Sengen_list">
@@ -107,25 +109,36 @@
             <div id = "const_list"></div>
         </div>
         <div id="cp_content4">
-            <p>説明テキスト 説明テキスト 説明テキスト</p>
-            <div class="cp_qain">
-                <div class="BLOCK">
-                    <input id="cp_tabfour058" type="checkbox" name="tabs">
-                    <div class="cp_plus">+</div>
-                    <label for="cp_tabfour058">質問テキスト</label>
-                    <div class="BLOCK-content">答えテキスト</div>
-                </div>
-                <div class="BLOCK">
-                    <input id="cp_tabfour059" type="checkbox" name="tabs">
-                    <div class="cp_plus">+</div>
-                    <label for="cp_tabfour059">質問テキスト 質問テキスト</label>
-                    <div class="BLOCK-content">答えテキスト</div>
-                </div>
+            <div class="cp_ipselect">
+                <select id="LogSelect" class="Select" required onchange="SelectLogHyouzi()">
+                    <option value="" hidden disabled selected></option>
+                    <option value="1">全ての変更履歴</option>
+                </select>
+                <span class="Select_highlight"></span>
+                <span class="Select_selectbar"></span>
+                <label class="Select_selectlabel">変更履歴</label>
+            </div>
+            <div class="cp_ipselect">
+                <select  class="Select" required onchange="SelectLogHyouzi()">
+                    <option value="" hidden disabled selected></option>
+                    <option value="1">変更した関数別に分類して表示する（変更点のみ）</option>
+                    <option value="1">変更した関数別に分類して表示する（関数全体）</option>
+                    <option value="1">プレーンテキストから表示する</option>
+                </select>
+                <span class="Select_highlight"></span>
+                <span class="Select_selectbar"></span>
+                <label class="Select_selectlabel">表示方法</label>
+            </div>
+            <div id="HenkouLog">
+
             </div>
         </div>
     </div>
-
     <script src="kaiseki.js"></script>
+    <script src="ライブラリ\leader-line.min.js"></script>
+    <script src="コードハイライト\highlight.min.js"></script>
+    <script src="ライブラリ\leader-line.min.js"></script>
+    <script>hljs.initHighlightingOnLoad(); </script>
 </body>
 
 </html>
