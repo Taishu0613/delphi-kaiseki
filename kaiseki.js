@@ -8,9 +8,9 @@ var a = 0;
 var Mode = "なし";//”explain”：説明文 "content":コンテンツ
 var strsplit = [];
 var CodeInfoArray = [];
-var cut1       = [];//コード内容と、説明文に分ける
+var cut1 = [];//コード内容と、説明文に分ける
 var Explains = [];//説明文達の配列
-var ContentB   = "";//コンテンツ内容
+var ContentB = "";//コンテンツ内容
 var Contents = [];//コンテンツ達の配列
 var Comment_;
 var Surash;
@@ -41,33 +41,31 @@ obj1.addEventListener(
             BunsekiString.value = str;
             Bunkai(str);
             hljs.initHighlightingOnLoad();
-            
+
         }
     },
     false);
 
 function Bunkai(str) {
     var BlockNo = 0;
-    strsplit=str.split("\n");//全てのコードを改行で配列に組み込む
-    for(var i = 0; i < strsplit.length; i++){
+    strsplit = str.split("\n");//全てのコードを改行で配列に組み込む
+    for (var i = 0; i < strsplit.length; i++) {
         var CodeInfo = {};
         CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
         //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
         CodeInfo.Line = i;//コードの行数を記録
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
         //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
-        if(CodeInfo.String.includes("************************************************************************")===true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
-        {   
-            if(Mode==="なし")//Modeの初期値は”なし”
-            Mode="説明文";//説明文モード   
-            else if(Mode==="コンテンツ") 
-            {
-                Mode="説明文";//説明文モード
+        if (CodeInfo.String.includes("************************************************************************") === true)//説明文とコンテンツが切り替わる文字列が含まれているかどうか
+        {
+            if (Mode === "なし")//Modeの初期値は”なし”
+                Mode = "説明文";//説明文モード   
+            else if (Mode === "コンテンツ") {
+                Mode = "説明文";//説明文モード
                 BlockNo++;//説明文モードに切り替わった場合、モードグループを１上げる
             }
-            else if(Mode==="説明文")
-            {
-                Mode="コンテンツ";//コンテンツモード
+            else if (Mode === "説明文") {
+                Mode = "コンテンツ";//コンテンツモード
             }
         }
         //----------------------------------------説明文とコンテンツ切替処理終了--------------------------------------------------------------------------------
@@ -77,7 +75,7 @@ function Bunkai(str) {
             CodeInfo.Mode = "コンテンツ"//モード：コンテンツと記録する
             a++;
         }
-        else if(Mode=="説明文")//説明文モードの場合
+        else if (Mode == "説明文")//説明文モードの場合
         {
             CodeInfo.Mode = "説明文"//モード：説明文と記録する
             CodeInfo.String = CodeInfo.String.replace("//**", '');
@@ -172,7 +170,7 @@ function ExplainBunseki(Explain, i) {
 
 //-------------------------------------------------ソート--------------------------------------------------
 //document.getElementById("sortC").addEventListener("change",aaa());
-function SortCode(){
+function SortCode() {
     var checkedC = document.getElementById("sortCompornent").checked;
     var checkedP = document.getElementById("sortProcess").checked;
     var checkedO = document.getElementById("sortOther").checked;
@@ -182,22 +180,22 @@ function SortCode(){
     var pp = document.querySelectorAll(".Component_list, .Sonota_list");
     var oo = document.querySelectorAll(".Proccess_list, .Component_list");
     //if(checked){
-        for(var i=0;i < aa.length;i++){
-            aa[i].style.display = "block";
-        }
+    for (var i = 0; i < aa.length; i++) {
+        aa[i].style.display = "block";
+    }
     //}
-    if(checkedC == true){
-        for(var i=0;i < cc.length;i++){
+    if (checkedC == true) {
+        for (var i = 0; i < cc.length; i++) {
             cc[i].style.display = "none";
         }
     }
-    if(checkedP == true){
-        for(var i=0;i < pp.length;i++){
+    if (checkedP == true) {
+        for (var i = 0; i < pp.length; i++) {
             pp[i].style.display = "none";
         }
     }
-    if(checkedO == true){
-        for(var i=0;i < oo.length;i++){
+    if (checkedO == true) {
+        for (var i = 0; i < oo.length; i++) {
             oo[i].style.display = "none";
         }
     }
@@ -289,8 +287,7 @@ function SelectLogHyouzi() {
 
     for (var i = 0; i < LogArray.length; i++) {
         //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
-        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
-        {
+        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {
             if (i == 0 || LogArray[i].BlockNo != preBlockNo) {//前回のログポイントと違う関数だったら関数名を表示
                 var LogContent = CodeInfoArray.filter((CodeInfo) => CodeInfo.BlockNo === LogArray[i].BlockNo && CodeInfo.Mode === "コンテンツ");
                 var HenkouLog_ChildName = document.createElement('div');//関数名を表示

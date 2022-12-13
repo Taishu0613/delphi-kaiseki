@@ -119,7 +119,7 @@
                 <label class="Select_selectlabel">変更履歴</label>
             </div>
             <div class="cp_ipselect">
-                <select id="LogSelect" class="Select" required onchange="SelectLogHyouzi()">
+                <select  class="Select" required onchange="SelectLogHyouzi()">
                     <option value="" hidden disabled selected></option>
                     <option value="1">変更した関数別に分類して表示する（変更点のみ）</option>
                     <option value="1">変更した関数別に分類して表示する（関数全体）</option>
@@ -130,13 +130,14 @@
                 <label class="Select_selectlabel">表示方法</label>
             </div>
             <div id="HenkouLog">
+
             </div>
         </div>
     </div>
-
     <script src="kaiseki.js"></script>
     <script src="ライブラリ\leader-line.min.js"></script>
     <script src="コードハイライト\highlight.min.js"></script>
+    <script src="ライブラリ\leader-line.min.js"></script>
     <script>hljs.initHighlightingOnLoad(); </script>
 </body>
 
