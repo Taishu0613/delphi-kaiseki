@@ -21,6 +21,8 @@ var KaKuNiNpoint = 0;
 var LogArray;
 var KaKuNiN_TUUKA;
 var KaKuNiN_list;
+var GyouCount;  //確認idの付与必要
+var HenkouLog_element = document.getElementById("HenkouLog");
 console.log("解析準備完了");
 
 //ダイアログでファイルが選択された時
@@ -268,10 +270,15 @@ function HenkouKensaku(LogID) {
 }
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
 function SelectLogHyouzi() {
-    KaKuNiNpoint=0;
-    var HenkouLog_element = document.getElementById("HenkouLog");
+    KaKuNiNpoint = 0;
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
+    }
+    var leader_lines = document.getElementsByClassName("leader-line");
+    if (0 < leader_lines.length) {
+        while (leader_lines.length) {
+            leader_lines.item(0).remove()
+        }
     }
     // selectタグを取得する（コンボボックスの履歴IDから検索）
     var select = document.getElementById("LogSelect").value;
@@ -292,7 +299,6 @@ function SelectLogHyouzi() {
                 HenkouLog_element.appendChild(HenkouLog_ChildName);
                 preBlockNo = LogArray[i].BlockNo;//今いる関数名を一次的に記憶
             }
-
             var HenkouLog_Child = document.createElement('div');//変更ログの一つをフィールドを作成
             HenkouLog_Child.className = "HenkouLog_Child";
             HenkouLog_element.appendChild(HenkouLog_Child);
@@ -304,6 +310,7 @@ function SelectLogHyouzi() {
             HenkouLog_Child.appendChild(highlight);
             var highlight2 = document.createElement('code');//コードエリア生成２
             highlight2.className = "delphi";
+            highlight2.id = "LogIDポイント" + LogArray[i].LogIDPoint;
             highlight.appendChild(highlight2);
         }
         LogKaKuNiN(i, HenkouLog_Child);
@@ -316,7 +323,37 @@ function SelectLogHyouzi() {
         else
             highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
     }
-    hljs.initHighlightingOnLoad();
+    hljs.initHighlightingOnLoad();//一旦ライブラリのハイライト追加
+    highlight2.textContent.split("\n");//その後もう一度spanタグを入れるため繰り返し処理
+    for (var i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {
+        var NowLogIDp = document.getElementById("LogIDポイント" + i)
+        console.log(NowLogIDp.innerHTML);
+        NowLogIDp.innerHTML = "<span id =" + i + "1番目の行>" + NowLogIDp.innerHTML + "</span>";
+        var ComentElements = NowLogIDp.getElementsByClassName('hljs-comment');
+        console.log(ComentElements);
+        for (var b = 0; b < ComentElements.length; b++) {
+            var count = (ComentElements[b].textContent.match(/\n/g) || []).length;//コメントタグの中の改行の個数
+            if (count > 1) {
+                ComentElements[b].innerHTML = ComentElements[b].innerHTML.replace(/\n/g, "</span>\n<span>");
+                if (ComentElements[b].lastChild.textContent === "")//Spanタグが余分にできたかどうか
+                    ComentElements[b].removeChild(ComentElements[b].lastChild);//余分にできたSpanタグを削除
+                var ComentElements_child_count = ComentElements[b].childElementCount;
+                for (var a = 0; a < ComentElements_child_count; a++) {
+                    ComentElements[b].children[a].className = "hljs-comment";//コメントタグをつけなおす
+                }
+            }
+        }
+        // NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n<span class="hljs-comment">/g, "</span>\n<span class=\"hljs-comment\"><span>");//改行ごとにspanタグ
+        NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n/g, "</span>\n<span>");//改行ごとにspanタグ
+        if (NowLogIDp.lastChild.textContent === "")//Spanタグが余分にできたかどうか
+            NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
+        var NowLogIDp_child_count = NowLogIDp.childElementCount;
+        console.log(NowLogIDp_child_count);
+        for (var a = 0; a < NowLogIDp_child_count; a++) {
+            NowLogIDp.children[a].id = (i + 1) + "の" + (a + 1) + "行目";//0始まりなので、1を+する
+        }
+        KakuninYazirushi(i);
+    }
 }
 //赤枠の確認欄作成ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 function LogKaKuNiN(i, HenkouLog_Child) {
@@ -324,14 +361,18 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         var KAKUNIN_childstring = "";
         KaKuNiN_list = document.createElement('div');
         KaKuNiN_list.className = "KaKuNiN_list";
+        KaKuNiN_list.id = "KaKuNiN_list" + (LogArray[i].LogIDPoint + 1);
         HenkouLog_Child.appendChild(KaKuNiN_list);
         KaKuNiN_TUUKA = false;//確認通過リセット
+        GyouCount = 0;
     }
+    GyouCount++;
     if (LogArray[i].String.trim().startsWith("//") === false && LogArray[i].String.trim().startsWith("{") === false) {//コメントアウトされてないもの
         if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
             KaKuNiNpoint++;
             var KaKuNiN = document.createElement('div');
             KaKuNiN.className = "KaKuNiN";
+            KaKuNiN.id = (LogArray[i].LogIDPoint + 1) + "の" + GyouCount + "行目確認";
             KaKuNiN_list.appendChild(KaKuNiN);
             var KaKuNiN_child = document.createElement('li');
             KaKuNiN_child.className = "KaKuNiN_child";
@@ -361,7 +402,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                     A = A.replace(')', "");
                     A = A.replace('then', "");
                     B = "?";
-                    if (ifString.search(/false/i) === -1) {
+                    if (ifString.search(/false/i) != -1) {
                         B = "True";
                     }
                 }
@@ -384,6 +425,25 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             }
             KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
         }
+    }
+}
+function KakuninYazirushi(i) {
+    var KaKuNiN_list_i = document.getElementById("KaKuNiN_list" + (i + 1));
+    var KaKuNiN_count = KaKuNiN_list_i.childElementCount;
+    console.log("確認の数" + KaKuNiN_count);
+    for (var a = 0; a < KaKuNiN_count; a++) {//確認リストの中の個数だけ繰り返す
+        var KaKuNiN_id = KaKuNiN_list_i.children[a].id;
+        var Line_id = KaKuNiN_id.replace(/確認/, "");//行IDは確認ＩＤから確認という文字を消したＩＤと合致する
+        //行IDと一致する要素を
+        new LeaderLine(
+            KaKuNiN_list_i.children[a],
+            document.getElementById(Line_id),
+            {
+                size: 2,
+                path: "straight",
+                color: 'red'
+            }
+        );
     }
 }
 //*****************************************************************************************************************
