@@ -70,7 +70,7 @@ function Bunkai(str) {
             }
         }
         //----------------------------------------説明文とコンテンツ切替処理終了--------------------------------------------------------------------------------
-        //-------------------------------------CodeInfoを作成しCodeAllInfoに格納------------------------------------------------------------------
+        //-------------------------------------CodeInfoを作成しCodeInfoArrayに格納------------------------------------------------------------------
         if (Mode == "コンテンツ")//コンテンツモードの場合
         {
             CodeInfo.Mode = "コンテンツ"//モード：コンテンツと記録する
@@ -79,17 +79,12 @@ function Bunkai(str) {
         else if (Mode == "説明文")//説明文モードの場合
         {
             CodeInfo.Mode = "説明文"//モード：説明文と記録する
-            CodeInfo.String = CodeInfo.String.replace("//**", '');
-            CodeInfo.String = CodeInfo.String.replace("//*", '');
-            CodeInfo.String = CodeInfo.String.replace("//", '');
-
-
             CodeInfo.String = CodeInfo.String.trim();
         }
         CodeInfoArray[i] = CodeInfo;
     }
-    console.log("CodeAllInfo作成完了");
-    //-------------------------------------CodeAInfoを作成しCodeAllInfoに格納終了------------------------------------------------------------------
+    console.log("CodeInfoArray作成完了");
+    //-------------------------------------CodeInfoを作成しCodeInfoArrayに格納終了------------------------------------------------------------------
     //----------------------------------------ブロックごとに配列を作成&分析-----------------------------------------------------
     for (var i = 0; i < BlockNo; i++) {
         //説明文の塊を作成する
@@ -148,6 +143,7 @@ function ExplainBunseki(Explain, i) {
     BLOCK_ContentCreate.className = 'BLOCK-content';//Classを指定
     BLOCKCreate.appendChild(BLOCK_ContentCreate);//配置場所を指定
     for (var i = 1; i < Explain.length - 1; i++) {
+        //Explain[i].String = Explain[i].String.replace("//", '');
         var BLOCK_Content_SplitCreate = document.createElement('li');//li要素作成
         BLOCK_Content_SplitCreate.textContent = Explain[i].String;//表示文字列を指定
         BLOCK_ContentCreate.appendChild(BLOCK_Content_SplitCreate);//配置場所を指定
@@ -205,21 +201,48 @@ function SortCode() {
 function HenkouLog(SystemExplain) {
     var L = 0;
     var LogID;
-    for (var i = 0; i < SystemExplain.length; i++) {
-        //SystemExplain[i].String = SystemExplain[i].String.trim();
-        var LogBoolean = SystemExplain[i].String.match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
+    // for (var i = 0; i < SystemExplain.length; i++) {
+    //     //SystemExplain[i].String = SystemExplain[i].String.trim();
+    //     var LogBoolean = SystemExplain[i].String.match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
+    //     //'<>'が含まれる場合
+    //     if (LogBoolean != null) {
+    //         CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
+    //         CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
+    //         LogID = CodeInfoArray[i].LogID;
+    //         HenkouKensaku(LogID);//ログIDを使ってコンテンツ内を検索
+    //         // selectタグを取得する
+    //         var select = document.getElementById("LogSelect");
+    //         // optionタグを作成する
+    //         var option = document.createElement("option");
+    //         // optionタグのテキストを変更履歴の文字列に設定する
+    //         option.text = SystemExplain[i].String;
+    //         // optionタグのvalueをログに設定する
+    //         option.value = LogID;
+    //         // selectタグの子要素にoptionタグを追加する
+    //         select.appendChild(option);
+    //         L++;
+    //     }
+    // }
+    //Unit～より上でログIDを検索する時＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+    var Unit = /unit/g;
+    var UnitNo=0;
+    while(Unit.test(CodeInfoArray[UnitNo].String)===false ||CodeInfoArray[UnitNo].String.trim().startsWith("//")===true){
+        UnitNo++;
+    }
+    for (var i = 0; i < UnitNo; i++) {
+        var LogBoolean = CodeInfoArray[i].String.match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
         //'<>'が含まれる場合
         if (LogBoolean != null) {
             CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
             CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
             LogID = CodeInfoArray[i].LogID;
-            HenkouKensaku(LogID);//ログIDを使ってコンテンツ内を検索
+            HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
             // selectタグを取得する
             var select = document.getElementById("LogSelect");
             // optionタグを作成する
             var option = document.createElement("option");
             // optionタグのテキストを変更履歴の文字列に設定する
-            option.text = SystemExplain[i].String;
+            option.text = CodeInfoArray[i].String;
             // optionタグのvalueをログに設定する
             option.value = LogID;
             // selectタグの子要素にoptionタグを追加する
@@ -236,10 +259,10 @@ function HenkouKensaku(LogID) {
         var BeginEnd = false;
         for (var b = 0; b < Content.length; b++) {//コンテンツの行を一つずつ調べる
             var ContentChild = Content[b];
-            if (ContentChild.String.includes(LogID) && ContentChild.String.startsWith("//")) {
+            if (ContentChild.String.includes(LogID) && ContentChild.String.startsWith("//")) {//コメントアウトでログIDが見つかった場合
                 var DelREIGAI = (ContentChild.String.match(/\/\//g) || []).length;
                 //　文字列に"//"が２つ以上のときはDELと認識し、一行だけ抜き出す。
-                if (DelREIGAI === 1) {
+                if (DelREIGAI === 1) {//DelREIGAIではない時（通常の処理）
                     if (BeginEnd) {
                         ContentChild.LogID = LogID;
                         ContentChild.LogIDPoint = LogIDPoint;
@@ -249,7 +272,7 @@ function HenkouKensaku(LogID) {
                         LogIDPoint++;
                     }
                 }
-                else {
+                else {//DelREIGAIの時
                     ContentChild.LogID = LogID;
                     ContentChild.LogIDPoint = LogIDPoint;
                     LogIDPoint++;
@@ -266,6 +289,42 @@ function HenkouKensaku(LogID) {
             }
         }
     }
+}
+function HenkouKensakuVer2(LogID,UnitNo) {
+    var LogIDPoint = 0;
+    var BeginEnd = false;
+    for (var b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
+        var CodeInfo = CodeInfoArray[b];
+        if (CodeInfo.String.includes(LogID) && CodeInfo.String.startsWith("//")) {//コメントアウトでログIDが見つかった場合
+            var DelREIGAI = (CodeInfo.String.match(/\/\//g) || []).length;
+            //　文字列に"//"が２つ以上のときはDELと認識し、一行だけ抜き出す。
+            if (DelREIGAI === 1) {//DelREIGAIではない時（通常の処理）
+                if (BeginEnd) {
+                    CodeInfo.LogID = LogID;
+                    CodeInfo.LogIDPoint = LogIDPoint;
+                }
+                BeginEnd = !BeginEnd;//判定反転
+                if (BeginEnd === false) {
+                    LogIDPoint++;
+                }
+            }
+            else {//DelREIGAIの時
+                CodeInfo.LogID = LogID;
+                CodeInfo.LogIDPoint = LogIDPoint;
+                LogIDPoint++;
+            }
+        }
+        else if (CodeInfo.String.includes(LogID)) {//ログＩDが文字の最初ではないときは1行だけ抜き出す。
+            CodeInfo.LogID = LogID;
+            CodeInfo.LogIDPoint = LogIDPoint;
+            LogIDPoint++;
+        }
+        if (BeginEnd) {
+            CodeInfo.LogID = LogID;
+            CodeInfo.LogIDPoint = LogIDPoint;
+        }
+    }
+    
 }
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
 function SelectLogHyouzi() {
@@ -325,10 +384,98 @@ function SelectLogHyouzi() {
     highlight2.textContent.split("\n");//その後もう一度spanタグを入れるため繰り返し処理
     for (var i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {
         var NowLogIDp = document.getElementById("LogIDポイント" + i)
-        console.log(NowLogIDp.innerHTML);
         NowLogIDp.innerHTML = "<span id =" + i + "1番目の行>" + NowLogIDp.innerHTML + "</span>";
         var ComentElements = NowLogIDp.getElementsByClassName('hljs-comment');
-        console.log(ComentElements);
+        for (var b = 0; b < ComentElements.length; b++) {
+            var count = (ComentElements[b].textContent.match(/\n/g) || []).length;//コメントタグの中の改行の個数
+            if (count > 1) {//以下複数行のコメントアウトを1行ずつのコメントアウト判定に変更
+                ComentElements[b].innerHTML ="<span>" + ComentElements[b].innerHTML + "</span>";
+                ComentElements[b].innerHTML = ComentElements[b].innerHTML.replace(/\n/g, "</span>\n<span>");
+                if (ComentElements[b].lastChild.textContent === "")//Spanタグが余分にできたかどうか
+                    ComentElements[b].removeChild(ComentElements[b].lastChild);//余分にできたSpanタグを削除
+                var ComentElements_child_count = ComentElements[b].childElementCount;
+                for (var a = 0; a < ComentElements_child_count; a++) {
+                    ComentElements[b].children[a].className = "hljs-comment";//コメントタグをつけなおす
+                }
+                ComentElements[b].id="削除対象";
+                var Sakuzyo_taisyou= document.getElementById("削除対象");
+                while (Sakuzyo_taisyou.firstChild) {// 親要素から最初の子要素を取得して親要素の上に子要素を移動
+                    Sakuzyo_taisyou.parentNode.insertBefore(Sakuzyo_taisyou.firstChild, Sakuzyo_taisyou);
+                }
+                Sakuzyo_taisyou.remove();// 空の親要素を削除
+            }
+        }
+        
+        NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n/g, "</span>\n<span>");//改行ごとにspanタグ
+        if (NowLogIDp.lastChild.textContent === "")//Spanタグが余分にできたかどうか
+            NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
+        var NowLogIDp_child_count = NowLogIDp.childElementCount;
+        console.log(NowLogIDp_child_count);
+        for (var a = 0; a < NowLogIDp_child_count; a++) {
+            NowLogIDp.children[a].id = (i + 1) + "の" + (a + 1) + "行目";//0始まりなので、1を+する
+        }
+        KakuninYazirushi(i);
+    }
+}
+function SelectLogHyouziVer2() {
+    KaKuNiNpoint = 0;
+    while (HenkouLog_element.lastChild) {
+        HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
+    }
+    var leader_lines = document.getElementsByClassName("leader-line");
+    if (0 < leader_lines.length) {
+        while (leader_lines.length) {
+            leader_lines.item(0).remove();//leader-lineの線初期化
+        }
+    }
+    // selectタグを取得する（コンボボックスの履歴IDから検索）
+    var select = document.getElementById("LogSelect").value;
+    console.log(select);
+    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
+    console.log(LogArray);
+    var preBlockNo;//今いる関数名を一次的に記憶
+
+    for (var i = 0; i < LogArray.length; i++) {
+        //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
+        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {
+            if (i == 0 || LogArray[i].BlockNo != preBlockNo) {//前回のログポイントと違う関数だったら関数名を表示
+                var LogContent = CodeInfoArray.filter((CodeInfo) => CodeInfo.BlockNo === LogArray[i].BlockNo && CodeInfo.Mode === "コンテンツ");
+                var HenkouLog_ChildName = document.createElement('div');//関数名を表示
+                HenkouLog_ChildName.className = "HenkouLog_ChildName";
+                HenkouLog_ChildName.textContent = LogContent[1].String;
+                HenkouLog_element.appendChild(HenkouLog_ChildName);
+                preBlockNo = LogArray[i].BlockNo;//今いる関数名を一次的に記憶
+            }
+            var HenkouLog_Child = document.createElement('div');//変更ログの一つをフィールドを作成
+            HenkouLog_Child.className = "HenkouLog_Child";
+            HenkouLog_element.appendChild(HenkouLog_Child);
+            var LineNo = document.createElement('div');//行エリア生成
+            LineNo.className = "LineNo";
+            HenkouLog_Child.appendChild(LineNo);
+            var highlight = document.createElement('pre');//コードエリア生成
+            highlight.className = "Codelog";
+            HenkouLog_Child.appendChild(highlight);
+            var highlight2 = document.createElement('code');//コードエリア生成２
+            highlight2.className = "delphi";
+            highlight2.id = "LogIDポイント" + LogArray[i].LogIDPoint;
+            highlight.appendChild(highlight2);
+        }
+        LogKaKuNiN(i, HenkouLog_Child);
+        var LineNo2 = document.createElement('li');
+        LineNo2.className = "LineNoChild";
+        LineNo2.textContent = LogArray[i].Line;
+        LineNo.appendChild(LineNo2);
+        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
+            highlight2.textContent = LogArray[i].String;//文字列を作成していく
+        else
+            highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
+    }
+    hljs.initHighlightingOnLoad();//一旦ライブラリのハイライト追加
+    highlight2.textContent.split("\n");//その後もう一度spanタグを入れるため繰り返し処理
+    for (var i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {
+        var NowLogIDp = document.getElementById("LogIDポイント" + i)
+        NowLogIDp.innerHTML = "<span id =" + i + "1番目の行>" + NowLogIDp.innerHTML + "</span>";
+        var ComentElements = NowLogIDp.getElementsByClassName('hljs-comment');
         for (var b = 0; b < ComentElements.length; b++) {
             var count = (ComentElements[b].textContent.match(/\n/g) || []).length;//コメントタグの中の改行の個数
             if (count > 1) {//以下複数行のコメントアウトを1行ずつのコメントアウト判定に変更
