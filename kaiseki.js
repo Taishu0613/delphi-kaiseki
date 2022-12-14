@@ -22,6 +22,7 @@ var LogArray;
 var KaKuNiN_TUUKA;
 var KaKuNiN_list;
 var GyouCount;  //確認idの付与必要
+var HukusuComment=false;//複数行のコメントアウト判定用
 var HenkouLog_element = document.getElementById("HenkouLog");
 console.log("解析準備完了");
 
@@ -275,7 +276,7 @@ function SelectLogHyouzi() {
     var leader_lines = document.getElementsByClassName("leader-line");
     if (0 < leader_lines.length) {
         while (leader_lines.length) {
-            leader_lines.item(0).remove()
+            leader_lines.item(0).remove();//leader-lineの線初期化
         }
     }
     // selectタグを取得する（コンボボックスの履歴IDから検索）
@@ -330,7 +331,8 @@ function SelectLogHyouzi() {
         console.log(ComentElements);
         for (var b = 0; b < ComentElements.length; b++) {
             var count = (ComentElements[b].textContent.match(/\n/g) || []).length;//コメントタグの中の改行の個数
-            if (count > 1) {
+            if (count > 1) {//以下複数行のコメントアウトを1行ずつのコメントアウト判定に変更
+                ComentElements[b].innerHTML ="<span>" + ComentElements[b].innerHTML + "</span>";
                 ComentElements[b].innerHTML = ComentElements[b].innerHTML.replace(/\n/g, "</span>\n<span>");
                 if (ComentElements[b].lastChild.textContent === "")//Spanタグが余分にできたかどうか
                     ComentElements[b].removeChild(ComentElements[b].lastChild);//余分にできたSpanタグを削除
@@ -338,9 +340,15 @@ function SelectLogHyouzi() {
                 for (var a = 0; a < ComentElements_child_count; a++) {
                     ComentElements[b].children[a].className = "hljs-comment";//コメントタグをつけなおす
                 }
+                ComentElements[b].id="削除対象";
+                var Sakuzyo_taisyou= document.getElementById("削除対象");
+                while (Sakuzyo_taisyou.firstChild) {// 親要素から最初の子要素を取得して親要素の上に子要素を移動
+                    Sakuzyo_taisyou.parentNode.insertBefore(Sakuzyo_taisyou.firstChild, Sakuzyo_taisyou);
+                }
+                Sakuzyo_taisyou.remove();// 空の親要素を削除
             }
         }
-        // NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n<span class="hljs-comment">/g, "</span>\n<span class=\"hljs-comment\"><span>");//改行ごとにspanタグ
+        
         NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n/g, "</span>\n<span>");//改行ごとにspanタグ
         if (NowLogIDp.lastChild.textContent === "")//Spanタグが余分にできたかどうか
             NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
@@ -364,7 +372,11 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         GyouCount = 0;
     }
     GyouCount++;
-    if (LogArray[i].String.trim().startsWith("//") === false && LogArray[i].String.trim().startsWith("{") === false) {//コメントアウトされてないもの
+    if (LogArray[i].String.trim().startsWith("{"))
+        HukusuComment=true;
+    else if(i!=0&&LogArray[i-1].String.trim().startsWith("}"))
+        HukusuComment=false;
+    if (LogArray[i].String.trim().startsWith("//") === false && HukusuComment === false &&LogArray[i].String.trim() != "") {//コメントアウトされてないもの
         if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
             KaKuNiNpoint++;
             var KaKuNiN = document.createElement('div');
@@ -376,41 +388,48 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child.contentEditable = true;
             KaKuNiN.appendChild(KaKuNiN_child);
             //以下分岐の処理
-            if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {
+            if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {//この中のに入ったら分岐確認
                 KAKUNIN_childstring = "分岐確認";
                 var ifString = LogArray[i].String.trim().replace(/\t/, " ");//タブ文字を空白に変換
-                if (/if not /i.test(ifString) === true) {//if Not の場合
+                var A = "True";//左側
+                var B = "False";//右側の選択肢
+                var C = "";//AND・ORが続く時用
+                var D = "";
+                var E = "";
+                var F="";
+                //以下一つ目の条件判定
+                if (/if not /i.test(ifString) === true) //if Not の場合
                     var XXXbegin = ifString.search(/if not[\( ]/i) + 7;
-                }
-                else {
+                else 
                     var XXXbegin = ifString.search(/if[\( ]/) + 3;
-                }
                 var XXXend = ifString.search(/[\) ](then|AND|OR|\<|\>|\=)/i);
                 //substring()で指定した文字以降を切り出し。
                 var XXX = ifString.substring(XXXbegin, XXXend);
-                var A = "True";
-                var B = "False";
-                var C = "";
-
-                if (ifString.search(/( \<| \>| \=)/) != -1 && ifString.search(/true/i) === -1) {//書き換える
-                    var Abegin = ifString.search(/(\< |\> |\= )/);
-                    var Aend = ifString.search(/[\) ](then|AND|OR)/i);
-                    A = ifString.substring(Abegin + 2, Aend);
+                var ifString1=ifString.substring(0, XXXend);//1つ目の条件文
+                if (ifString1.search(/( \<| \>| \=)/) != -1 && ifString1.search(/true/i) === -1) {//選択肢を書き換える
+                    var Abegin = ifString1.search(/(\< |\> |\= )/);
+                    A = ifString1.substring(Abegin + 2);
                     A = A.replace(')', "");
                     A = A.replace('then', "");
                     B = "?";
-                    if (ifString.search(/false/i) != -1) {
+                    if (ifString1.search(/false/i) != -1) {
                         B = "True";
                     }
                 }
-
+                //以下2つ目の条件判定
                 if (ifString.search(/[\) ](AND|OR)/i) != -1) {//ANDかORが含まれていた場合
-                    C = "\nまたは、かつ";
+                    if (ifString.search(/[\) ](AND)/i) != -1)
+                    C = "<br> かつ<br>";
+                    if (ifString.search(/[\) ](OR)/i) != -1)
+                    C = "<br> または<br>";
+                    D = "True";//左側
+                    E = "False";//右側の選択肢
+                    F = "XXXの値が（" + D + "," + E + "）";
                 }
                 var KaKuNiN_child2 = document.createElement('li');//確認要素二行目
                 KaKuNiN_child2.className = "KaKuNiN_child2";
                 KaKuNiN_child2.contentEditable = true;
-                KaKuNiN_child2.textContent = XXX + "の値が（" + A + "," + B + "）で分岐" + C;
+                KaKuNiN_child2.innerHTML = XXX + "の値が（" + A + "," + B + "）"+ C+F+"で分岐" ;
                 KaKuNiN.appendChild(KaKuNiN_child2);
                 KaKuNiN_TUUKA = true;//確認通過
             }
