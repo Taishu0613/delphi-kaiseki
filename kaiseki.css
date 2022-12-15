@@ -242,7 +242,7 @@ li {
 .cp_ipselect {
 	position: relative;
 	width: 90%;
-	margin: 2em auto;
+	margin: 2em 3%;
 	text-align: center;
 }
 
@@ -341,8 +341,31 @@ li {
 	left: 0;
 	pointer-events: none;
 	opacity: 0.5;
-  }
+}
+/* 確認ナンバー入力欄 */
+.cp_iptxt {
+	position: relative;
+	width: 40%;
+	margin: 40px 3%;
+}
 
+.cp_iptxt input[type='number'] {
+	font: 15px/24px sans-serif;
+	box-sizing: border-box;
+	width: 100%;
+	padding: 0.3em;
+	transition: 0.3s;
+	letter-spacing: 1px;
+	color: rgba(0, 0, 0, 0.6);
+	border: none;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+	background: transparent;
+}
+
+.ef input[type='text']:focus {
+	border-bottom: 2px solid #da3c41;
+	outline: none;
+}
 
 /* ーーーーーーーーーーーーーーーーーーーーーーーーーー宣言UI多段化ーーーーーーーーーーーーーーーーーーーーーーーー */
 

@@ -552,7 +552,8 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                 var XXXend = ifString.search(/[\) ](then|AND|OR|\<|\>|\=)/i);
                 //substring()で指定した文字以降を切り出し。
                 var XXX = ifString.substring(XXXbegin, XXXend);
-                var ifString1=ifString.substring(0, XXXend);//1つ目の条件文
+                var ifend1 = ifString.search(/[\) ](then|AND|OR)/i);
+                var ifString1 = ifString.substring(0, ifend1);//1つ目の条件文
                 if (ifString1.search(/( \<| \>| \=)/) != -1 && ifString1.search(/true/i) === -1) {//選択肢を書き換える
                     var Abegin = ifString1.search(/(\< |\> |\= )/);
                     A = ifString1.substring(Abegin + 2);
