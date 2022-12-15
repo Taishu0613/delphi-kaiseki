@@ -24,6 +24,7 @@ var KaKuNiN_list;
 var GyouCount;  //確認idの付与必要
 var HukusuComment=false;//複数行のコメントアウト判定用
 var HenkouLog_element = document.getElementById("HenkouLog");
+var FirstKakuninNo = 0;
 console.log("解析準備完了");
 
 //ダイアログでファイルが選択された時
@@ -327,6 +328,9 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     
 }
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
+function HENSUset(){
+    FirstKakuninNo=Number(document.getElementById("firstKakuninNo").value)-1;
+}
 function SelectLogHyouzi() {
     KaKuNiNpoint = 0;
     while (HenkouLog_element.lastChild) {
@@ -418,7 +422,10 @@ function SelectLogHyouzi() {
     }
 }
 function SelectLogHyouziVer2() {
+    if(FirstKakuninNo===0)
     KaKuNiNpoint = 0;
+    else
+    KaKuNiNpoint=FirstKakuninNo;
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
     }
