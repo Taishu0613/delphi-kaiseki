@@ -447,9 +447,13 @@ function SelectLogHyouziVer2() {
         if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {
             if (i == 0 || LogArray[i].BlockNo != preBlockNo) {//前回のログポイントと違う関数だったら関数名を表示
                 var LogContent = CodeInfoArray.filter((CodeInfo) => CodeInfo.BlockNo === LogArray[i].BlockNo && CodeInfo.Mode === "コンテンツ");
+                var a =1;
+                while(LogContent[a].String.startsWith("//")===true)//万が一関数名があるべき場所にコメントアウトされていたら一つ下の行に
+                    a++;
                 var HenkouLog_ChildName = document.createElement('div');//関数名を表示
                 HenkouLog_ChildName.className = "HenkouLog_ChildName";
-                HenkouLog_ChildName.textContent = LogContent[1].String;
+                HenkouLog_ChildName.contentEditable = true;
+                HenkouLog_ChildName.textContent = LogContent[a].String;
                 HenkouLog_element.appendChild(HenkouLog_ChildName);
                 preBlockNo = LogArray[i].BlockNo;//今いる関数名を一次的に記憶
             }
