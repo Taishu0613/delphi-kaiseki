@@ -24,7 +24,10 @@ var KaKuNiN_list;
 var GyouCount;  //確認idの付与必要
 var HukusuComment=false;//複数行のコメントアウト判定用
 var HenkouLog_element = document.getElementById("HenkouLog");
+var FileName = document.getElementsByClassName("FileName");
 var FirstKakuninNo = 0;
+var file1={};
+
 console.log("解析準備完了");
 
 //ダイアログでファイルが選択された時
@@ -36,12 +39,15 @@ obj1.addEventListener(
         var reader = new FileReader();
         //テキスト形式で読み込む
         reader.readAsText(file[0]);
+        //情報を保存
+        file1=file[0];
         //読込終了後の処理
         reader.onload = function (ev) { //テキストエリアに表示する
             str = reader.result;
             //str=str.replace(/[\t]/,"    ");//インデントを記録する方法
             BunsekiString.value = str;
             Bunkai(str);
+            FileName[0].innerHTML="<b>ファイル名:"+file1.name+"</b>";
             hljs.initHighlightingOnLoad();
 
         }
@@ -53,8 +59,8 @@ function Bunkai(str) {
     strsplit = str.split("\n");//全てのコードを改行で配列に組み込む
     for (var i = 0; i < strsplit.length; i++) {
         var CodeInfo = {};
-        CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
-        //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
+        CodeInfo.String = strsplit[i];//コードの文字列を記録
+        
         CodeInfo.Line = i;//コードの行数を記録
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
         //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
@@ -236,7 +242,7 @@ function HenkouLog(SystemExplain) {
         if (LogBoolean != null) {
             CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
             CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
-            LogID = CodeInfoArray[i].LogID;
+            LogID = LogBoolean[0];
             HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
             // selectタグを取得する
             var select = document.getElementById("LogSelect");
@@ -296,12 +302,14 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     var BeginEnd = false;
     for (var b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
         var CodeInfo = CodeInfoArray[b];
-        if (CodeInfo.String.includes(LogID) && CodeInfo.String.startsWith("//")) {//コメントアウトでログIDが見つかった場合
+        if(CodeInfo.LogID===undefined)
+            CodeInfo.LogID="";
+        if (CodeInfo.String.includes(LogID) && CodeInfo.String.trim().startsWith("//")) {//コメントアウトでログIDが見つかった場合
             var DelREIGAI = (CodeInfo.String.match(/\/\//g) || []).length;
             //　文字列に"//"が２つ以上のときはDELと認識し、一行だけ抜き出す。
             if (DelREIGAI === 1) {//DelREIGAIではない時（通常の処理）
                 if (BeginEnd) {
-                    CodeInfo.LogID = LogID;
+                    CodeInfo.LogID = CodeInfo.LogID+LogID;
                     CodeInfo.LogIDPoint = LogIDPoint;
                 }
                 BeginEnd = !BeginEnd;//判定反転
@@ -310,18 +318,18 @@ function HenkouKensakuVer2(LogID,UnitNo) {
                 }
             }
             else {//DelREIGAIの時
-                CodeInfo.LogID = LogID;
+                CodeInfo.LogID = CodeInfo.LogID+LogID;
                 CodeInfo.LogIDPoint = LogIDPoint;
                 LogIDPoint++;
             }
         }
         else if (CodeInfo.String.includes(LogID)) {//ログＩDが文字の最初ではないときは1行だけ抜き出す。
-            CodeInfo.LogID = LogID;
+            CodeInfo.LogID = CodeInfo.LogID+LogID;
             CodeInfo.LogIDPoint = LogIDPoint;
             LogIDPoint++;
         }
         if (BeginEnd) {
-            CodeInfo.LogID = LogID;
+            CodeInfo.LogID = CodeInfo.LogID+LogID;;
             CodeInfo.LogIDPoint = LogIDPoint;
         }
     }
@@ -438,7 +446,7 @@ function SelectLogHyouziVer2() {
     // selectタグを取得する（コンボボックスの履歴IDから検索）
     var select = document.getElementById("LogSelect").value;
     console.log(select);
-    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
+    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID!= undefined &&CodeInfo.LogID.includes(select) === true && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
     var preBlockNo;//今いる関数名を一次的に記憶
 
@@ -462,6 +470,7 @@ function SelectLogHyouziVer2() {
             HenkouLog_element.appendChild(HenkouLog_Child);
             var LineNo = document.createElement('div');//行エリア生成
             LineNo.className = "LineNo";
+            LineNo.oncopy="return false";
             HenkouLog_Child.appendChild(LineNo);
             var highlight = document.createElement('pre');//コードエリア生成
             highlight.className = "Codelog";

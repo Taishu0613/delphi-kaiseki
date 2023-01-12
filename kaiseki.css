@@ -433,3 +433,12 @@ code {
 	padding: 3px;
 
 }
+.FileName{
+    font-size: 18px;
+	border-radius: 10px;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	line-height: 1.2;
+}
+.HenkouLog_ChildName{
+    margin-left: 26px;
+}
