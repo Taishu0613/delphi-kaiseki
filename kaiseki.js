@@ -304,7 +304,7 @@ function HenkouKensakuVer2(LogID,UnitNo) {
         var CodeInfo = CodeInfoArray[b];
         if(CodeInfo.LogID===undefined)
             CodeInfo.LogID="";
-        if (CodeInfo.String.includes(LogID) && CodeInfo.String.startsWith("//")) {//コメントアウトでログIDが見つかった場合
+        if (CodeInfo.String.includes(LogID) && CodeInfo.String.trim().startsWith("//")) {//コメントアウトでログIDが見つかった場合
             var DelREIGAI = (CodeInfo.String.match(/\/\//g) || []).length;
             //　文字列に"//"が２つ以上のときはDELと認識し、一行だけ抜き出す。
             if (DelREIGAI === 1) {//DelREIGAIではない時（通常の処理）
