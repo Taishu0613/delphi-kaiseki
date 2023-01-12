@@ -59,8 +59,8 @@ function Bunkai(str) {
     strsplit = str.split("\n");//全てのコードを改行で配列に組み込む
     for (var i = 0; i < strsplit.length; i++) {
         var CodeInfo = {};
-        CodeInfo.String = strsplit[i];//コードの文字列を記録 //インデントを消すかどうかだよ
-        //CodeInfo.String=strsplit[i].trim();//インデントを消すかどうかだよ
+        CodeInfo.String = strsplit[i];//コードの文字列を記録
+        
         CodeInfo.Line = i;//コードの行数を記録
         CodeInfo.BlockNo = BlockNo;//何個目の説明文とコンテンツかを記録
         //----------------------------------------説明文とコンテンツ切替処理--------------------------------------------------------------------------------
