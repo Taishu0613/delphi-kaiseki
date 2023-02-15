@@ -305,8 +305,17 @@ function HenkouKensaku(LogID) {
 function HenkouKensakuVer2(LogID,UnitNo) {
     let LogIDPoint = 0;
     let BeginEnd = false;
+    let TEIGIBeginEnd = false;
     for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
         let CodeInfo = CodeInfoArray[b];
+        //その行が定義されている行か調べる
+        if(CodeInfo.String.trim().startsWith("var")) 
+            TEIGIBeginEnd = true
+        else if(CodeInfo.String.trim().startsWith("begin")) 
+            TEIGIBeginEnd = false;
+        if(TEIGIBeginEnd === true)
+            CodeInfo.Teigi=true;
+
         if(CodeInfo.LogID===undefined)
             CodeInfo.LogID="";
         if (CodeInfo.String.includes(LogID) && CodeInfo.String.trim().startsWith("//")) {//コメントアウトでログIDが見つかった場合
@@ -555,6 +564,11 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child.className = "KaKuNiN_child";
             KaKuNiN_child.contentEditable = true;
             KaKuNiN.appendChild(KaKuNiN_child);
+            //定義の場合は不要
+            if (LogArray[i].Teigi === true){
+                KAKUNIN_childstring = "定義の為確認不要";
+                KaKuNiN_TUUKA = true;//確認通過
+            }
             //以下分岐の処理
             if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {//この中のに入ったら分岐確認
                 KAKUNIN_childstring = "分岐確認";
