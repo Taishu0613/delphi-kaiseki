@@ -549,7 +549,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         GyouCount = 0;
     }
     GyouCount++;
-    if (LogArray[i].String.trim().startsWith("{"))
+    if (LogArray[i].String.trim().startsWith("{") && !(LogArray[i].String.trim().startsWith("{$")))
         HukusuComment=true;
     else if(i!=0&&LogArray[i-1].String.trim().startsWith("}"))
         HukusuComment=false;
