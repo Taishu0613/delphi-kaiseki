@@ -27,6 +27,7 @@ let HenkouLog_element = document.getElementById("HenkouLog");
 let FileName = document.getElementsByClassName("FileName");
 let FirstKakuninNo = 0;
 let file1={};
+let UnitNo=0;
 
 console.log("解析準備完了");
 
@@ -213,31 +214,9 @@ function SortCode() {
 function HenkouLog(SystemExplain) {
     let L = 0;
     let LogID;
-    // for (let i = 0; i < SystemExplain.length; i++) {
-    //     //SystemExplain[i].String = SystemExplain[i].String.trim();
-    //     let LogBoolean = SystemExplain[i].String.match(/\<.*?\>/g);//正規表現を使い’<>’が含まれる場合tureにする
-    //     //'<>'が含まれる場合
-    //     if (LogBoolean != null) {
-    //         CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
-    //         CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
-    //         LogID = CodeInfoArray[i].LogID;
-    //         HenkouKensaku(LogID);//ログIDを使ってコンテンツ内を検索
-    //         // selectタグを取得する
-    //         let select = document.getElementById("LogSelect");
-    //         // optionタグを作成する
-    //         let option = document.createElement("option");
-    //         // optionタグのテキストを変更履歴の文字列に設定する
-    //         option.text = SystemExplain[i].String;
-    //         // optionタグのvalueをログに設定する
-    //         option.value = LogID;
-    //         // selectタグの子要素にoptionタグを追加する
-    //         select.appendChild(option);
-    //         L++;
-    //     }
-    // }
     //Unit～より上でログIDを検索する時＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
     let Unit = /unit/g;
-    let UnitNo=0;
+    UnitNo=0;
     while(Unit.test(CodeInfoArray[UnitNo].String)===false ||CodeInfoArray[UnitNo].String.trim().startsWith("//")===true){
         UnitNo++;
     }
@@ -248,7 +227,7 @@ function HenkouLog(SystemExplain) {
             CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
             CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
             LogID = LogBoolean[0];
-            HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
+//          HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
             // selectタグを取得する
             let select = document.getElementById("LogSelect");
             // optionタグを作成する
@@ -305,7 +284,7 @@ function HenkouKensaku(LogID) {
 function HenkouKensakuVer2(LogID,UnitNo) {
     let LogIDPoint = 0;
     let BeginEnd = false;
-    for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
+    for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(Unitからの全てのプログラム)の行を一つずつ調べる
         let CodeInfo = CodeInfoArray[b];
         if(CodeInfo.LogID===undefined)
             CodeInfo.LogID="";
@@ -341,7 +320,7 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     
 }
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
-function HENSUset(){
+function HENSUset(){//最初の確認ナンバー
     FirstKakuninNo=Number(document.getElementById("firstKakuninNo").value)-1;
 }
 function SelectLogHyouzi() {
@@ -451,6 +430,7 @@ function SelectLogHyouziVer2() {
     // selectタグを取得する（コンボボックスの履歴IDから検索）
     let select = document.getElementById("LogSelect").value;
     console.log(select);
+    HenkouKensakuVer2(select,UnitNo);//ログIDを使ってコンテンツ内を検索
     LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID!= undefined &&CodeInfo.LogID.includes(select) === true && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
     let pre_FunctionProcedure_Name;//今いる関数名を一次的に記憶
