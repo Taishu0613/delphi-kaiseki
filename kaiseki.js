@@ -309,7 +309,7 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
         let CodeInfo = CodeInfoArray[b];
         //その行が定義されている行か調べる
-        if(CodeInfo.String.trim()==="var"||CodeInfo.FunctionProcedure_Name.trim().startsWith("unit "))
+        if(CodeInfo.String.trim()==="var"||CodeInfo.String.trim()==="const"||CodeInfo.FunctionProcedure_Name.trim().startsWith("unit "))
             TEIGIBeginEnd = true
         else if(CodeInfo.String.trim()==="begin") 
             TEIGIBeginEnd = false;
