@@ -284,8 +284,17 @@ function HenkouKensaku(LogID) {
 function HenkouKensakuVer2(LogID,UnitNo) {
     let LogIDPoint = 0;
     let BeginEnd = false;
-    for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(Unitからの全てのプログラム)の行を一つずつ調べる
+    let TEIGIBeginEnd = false;
+    for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
         let CodeInfo = CodeInfoArray[b];
+        //その行が定義されている行か調べる
+        if(CodeInfo.String.trim()==="var"||CodeInfo.FunctionProcedure_Name.trim().startsWith("unit "))
+            TEIGIBeginEnd = true
+        else if(CodeInfo.String.trim()==="begin") 
+            TEIGIBeginEnd = false;
+        if(TEIGIBeginEnd === true)
+            CodeInfo.Teigi=true;
+
         if(CodeInfo.LogID===undefined)
             CodeInfo.LogID="";
         if (CodeInfo.String.includes(LogID) && CodeInfo.String.trim().startsWith("//")) {//コメントアウトでログIDが見つかった場合
@@ -323,96 +332,7 @@ function HenkouKensakuVer2(LogID,UnitNo) {
 function HENSUset(){//最初の確認ナンバー
     FirstKakuninNo=Number(document.getElementById("firstKakuninNo").value)-1;
 }
-function SelectLogHyouzi() {
-    KaKuNiNpoint = 0;
-    while (HenkouLog_element.lastChild) {
-        HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
-    }
-    let leader_lines = document.getElementsByClassName("leader-line");
-    if (0 < leader_lines.length) {
-        while (leader_lines.length) {
-            leader_lines.item(0).remove();//leader-lineの線初期化
-        }
-    }
-    // selectタグを取得する（コンボボックスの履歴IDから検索）
-    let select = document.getElementById("LogSelect").value;
-    console.log(select);
-    LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID === select && CodeInfo.LogIDPoint != undefined);
-    console.log(LogArray);
-    let preBlockNo;//今いる関数名を一次的に記憶
 
-    for (let i = 0; i < LogArray.length; i++) {
-        //ログポイントが切り替わったら、グループ化（同ログポイントの最初）
-        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint) {
-            if (i == 0 || LogArray[i].BlockNo != preBlockNo) {//前回のログポイントと違う関数だったら関数名を表示
-                let LogContent = CodeInfoArray.filter((CodeInfo) => CodeInfo.BlockNo === LogArray[i].BlockNo && CodeInfo.Mode === "コンテンツ");
-                let HenkouLog_ChildName = document.createElement('div');//関数名を表示
-                HenkouLog_ChildName.className = "HenkouLog_ChildName";
-                HenkouLog_ChildName.textContent = LogContent[1].String;
-                HenkouLog_element.appendChild(HenkouLog_ChildName);
-                preBlockNo = LogArray[i].BlockNo;//今いる関数名を一次的に記憶
-            }
-            let HenkouLog_Child = document.createElement('div');//変更ログの一つをフィールドを作成
-            HenkouLog_Child.className = "HenkouLog_Child";
-            HenkouLog_element.appendChild(HenkouLog_Child);
-            let LineNo = document.createElement('div');//行エリア生成
-            LineNo.className = "LineNo";
-            HenkouLog_Child.appendChild(LineNo);
-            let highlight = document.createElement('pre');//コードエリア生成
-            highlight.className = "Codelog";
-            HenkouLog_Child.appendChild(highlight);
-            let highlight2 = document.createElement('code');//コードエリア生成２
-            highlight2.className = "delphi";
-            highlight2.id = "LogIDポイント" + LogArray[i].LogIDPoint;
-            highlight.appendChild(highlight2);
-        }
-        LogKaKuNiN(i, HenkouLog_Child);
-        let LineNo2 = document.createElement('li');
-        LineNo2.className = "LineNoChild";
-        LineNo2.textContent = LogArray[i].Line;
-        LineNo.appendChild(LineNo2);
-        if (i == 0 || LogArray[i].LogIDPoint != LogArray[i - 1].LogIDPoint)
-            highlight2.textContent = LogArray[i].String;//文字列を作成していく
-        else
-            highlight2.textContent = highlight2.textContent + "\n" + LogArray[i].String;//文字列を作成していく
-    }
-    hljs.initHighlightingOnLoad();//一旦ライブラリのハイライト追加
-    highlight2.textContent.split("\n");//その後もう一度spanタグを入れるため繰り返し処理
-    for (let i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {
-        let NowLogIDp = document.getElementById("LogIDポイント" + i)
-        NowLogIDp.innerHTML = "<span id =" + i + "1番目の行>" + NowLogIDp.innerHTML + "</span>";
-        let ComentElements = NowLogIDp.getElementsByClassName('hljs-comment');
-        for (let b = 0; b < ComentElements.length; b++) {
-            let count = (ComentElements[b].textContent.match(/\n/g) || []).length;//コメントタグの中の改行の個数
-            if (count > 1) {//以下複数行のコメントアウトを1行ずつのコメントアウト判定に変更
-                ComentElements[b].innerHTML ="<span>" + ComentElements[b].innerHTML + "</span>";
-                ComentElements[b].innerHTML = ComentElements[b].innerHTML.replace(/\n/g, "</span>\n<span>");
-                if (ComentElements[b].lastChild.textContent === "")//Spanタグが余分にできたかどうか
-                    ComentElements[b].removeChild(ComentElements[b].lastChild);//余分にできたSpanタグを削除
-                let ComentElements_child_count = ComentElements[b].childElementCount;
-                for (let a = 0; a < ComentElements_child_count; a++) {
-                    ComentElements[b].children[a].className = "hljs-comment";//コメントタグをつけなおす
-                }
-                ComentElements[b].id="削除対象";
-                let Sakuzyo_taisyou= document.getElementById("削除対象");
-                while (Sakuzyo_taisyou.firstChild) {// 親要素から最初の子要素を取得して親要素の上に子要素を移動
-                    Sakuzyo_taisyou.parentNode.insertBefore(Sakuzyo_taisyou.firstChild, Sakuzyo_taisyou);
-                }
-                Sakuzyo_taisyou.remove();// 空の親要素を削除
-            }
-        }
-        
-        NowLogIDp.innerHTML = NowLogIDp.innerHTML.replace(/\n/g, "</span>\n<span>");//改行ごとにspanタグ
-        if (NowLogIDp.lastChild.textContent === "")//Spanタグが余分にできたかどうか
-            NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
-        let NowLogIDp_child_count = NowLogIDp.childElementCount;
-        console.log(NowLogIDp_child_count);
-        for (let a = 0; a < NowLogIDp_child_count; a++) {
-            NowLogIDp.children[a].id = (i + 1) + "の" + (a + 1) + "行目";//0始まりなので、1を+する
-        }
-        KakuninYazirushi(i);
-    }
-}
 function SelectLogHyouziVer2() {
     if(FirstKakuninNo===0)
     KaKuNiNpoint = 0;
@@ -535,6 +455,11 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             KaKuNiN_child.className = "KaKuNiN_child";
             KaKuNiN_child.contentEditable = true;
             KaKuNiN.appendChild(KaKuNiN_child);
+            //定義の場合は不要
+            if (LogArray[i].Teigi === true){
+                KAKUNIN_childstring = "定義の為確認不要";
+                KaKuNiN_TUUKA = true;//確認通過
+            }
             //以下分岐の処理
             if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {//この中のに入ったら分岐確認
                 KAKUNIN_childstring = "分岐確認";
