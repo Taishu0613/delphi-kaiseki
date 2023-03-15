@@ -459,3 +459,10 @@ code {
 .HenkouLog_ChildName{
     margin-left: 26px;
 }
+table td{/*tdに対して*/
+    color: gray;
+    font-size: 14px;
+    }
+.td_num{
+    text-align: right;
+}

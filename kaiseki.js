@@ -27,7 +27,6 @@ let HenkouLog_element = document.getElementById("HenkouLog");
 let FileName = document.getElementsByClassName("FileName");
 let FirstKakuninNo = 0;
 let file1={};
-let UnitNo=0;
 
 console.log("解析準備完了");
 
@@ -216,7 +215,7 @@ function HenkouLog(SystemExplain) {
     let LogID;
     //Unit～より上でログIDを検索する時＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
     let Unit = /unit/g;
-    UnitNo=0;
+    let UnitNo=0;
     while(Unit.test(CodeInfoArray[UnitNo].String)===false ||CodeInfoArray[UnitNo].String.trim().startsWith("//")===true){
         UnitNo++;
     }
@@ -227,7 +226,7 @@ function HenkouLog(SystemExplain) {
             CodeInfoArray[i].LogID = LogBoolean[0];//変更ログのIDの文字列を記録
             CodeInfoArray[i].LogNo = L;//変更ログのIDの数字を記録
             LogID = LogBoolean[0];
-//          HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
+            HenkouKensakuVer2(LogID,UnitNo);//ログIDを使ってコンテンツ内を検索
             // selectタグを取得する
             let select = document.getElementById("LogSelect");
             // optionタグを作成する
@@ -329,15 +328,15 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     
 }
 //ーーーーーーーーーーーーーーーーーーーーーーコンボボックス選択後変更履歴表示ーーーーーーーーーーーーーーーーーーーー
-function HENSUset(){//最初の確認ナンバー
+function HENSUset(){
     FirstKakuninNo=Number(document.getElementById("firstKakuninNo").value)-1;
 }
 
 function SelectLogHyouziVer2() {
     if(FirstKakuninNo===0)
-    KaKuNiNpoint = 0;
+        KaKuNiNpoint = 0;
     else
-    KaKuNiNpoint=FirstKakuninNo;
+        KaKuNiNpoint=FirstKakuninNo;
     while (HenkouLog_element.lastChild) {
         HenkouLog_element.removeChild(HenkouLog_element.lastChild);//変更ログ初期化
     }
@@ -350,7 +349,6 @@ function SelectLogHyouziVer2() {
     // selectタグを取得する（コンボボックスの履歴IDから検索）
     let select = document.getElementById("LogSelect").value;
     console.log(select);
-    HenkouKensakuVer2(select,UnitNo);//ログIDを使ってコンテンツ内を検索
     LogArray = CodeInfoArray.filter((CodeInfo) => CodeInfo.LogID!= undefined &&CodeInfo.LogID.includes(select) === true && CodeInfo.LogIDPoint != undefined);
     console.log(LogArray);
     let pre_FunctionProcedure_Name;//今いる関数名を一次的に記憶
@@ -421,12 +419,18 @@ function SelectLogHyouziVer2() {
         if (NowLogIDp.lastChild.textContent === "")//Spanタグが余分にできたかどうか
             NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
         let NowLogIDp_child_count = NowLogIDp.childElementCount;
-        console.log(NowLogIDp_child_count);
+        console.log("修正・追加"+NowLogIDp_child_count+"行");
         for (let a = 0; a < NowLogIDp_child_count; a++) {
             NowLogIDp.children[a].id = `${i + 1}の${a + 1}行目`;//0始まりなので、1を+する
         }
         KakuninYazirushi(i);
     }
+    console.log("コーディングボリューム"+LogArray.length+"行");
+    let CodeVol =document.getElementById("codeVol");
+    CodeVol.textContent=LogArray.length+"行"
+    console.log("単体テストボリューム"+KaKuNiNpoint+"件");
+    let TantaiVol =document.getElementById("TantaiVol");
+    TantaiVol.textContent=KaKuNiNpoint+"件"
 }
 //赤枠の確認欄作成ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 function LogKaKuNiN(i, HenkouLog_Child) {
@@ -446,6 +450,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         HukusuComment=false;
     if (LogArray[i].String.trim().startsWith("//") === false && HukusuComment === false &&LogArray[i].String.trim() != "") {//コメントアウトされてないもの
         if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
+            var Kakunin_No_Hyouzi=true;
             KaKuNiNpoint++;
             let KaKuNiN = document.createElement('div');
             KaKuNiN.className = "KaKuNiN";
@@ -459,6 +464,8 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             if (LogArray[i].Teigi === true){
                 KAKUNIN_childstring = "定義の為確認不要";
                 KaKuNiN_TUUKA = true;//確認通過
+                KaKuNiNpoint--;//確認Noを表示させないので増加させない。
+                Kakunin_No_Hyouzi=false;
             }
             //以下分岐の処理
             if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {//この中のに入ったら分岐確認
@@ -514,14 +521,22 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                 KAKUNIN_childstring = "通過確認";
                 KaKuNiN_TUUKA = true;//確認通過
             }
-            KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
+            if(Kakunin_No_Hyouzi==true)
+                KaKuNiN_child.textContent = "No" + KaKuNiNpoint + "  " + KAKUNIN_childstring;
+            else
+                KaKuNiN_child.textContent = KAKUNIN_childstring;
         }
     }
 }
 function KakuninYazirushi(i) {
     let KaKuNiN_list_i = document.getElementById("KaKuNiN_list" + (i + 1));
     let KaKuNiN_count = KaKuNiN_list_i.childElementCount;
-    console.log("確認の数" + KaKuNiN_count);
+    if(KaKuNiN_count===0)
+        console.log("確認なし★");
+    else if(KaKuNiN_count===1)
+        console.log("確認あり");
+    else
+        console.log("エラーの可能性があります。確認の数が二個以上");
     for (let a = 0; a < KaKuNiN_count; a++) {//確認リストの中の個数だけ繰り返す
         let KaKuNiN_id = KaKuNiN_list_i.children[a].id;
         let Line_id = KaKuNiN_id.replace(/確認/, "");//行IDは確認ＩＤから確認という文字を消したＩＤと合致する
@@ -629,4 +644,9 @@ function SengenBunseki(ContentChild) {
         Sengen_listCreate.appendChild(CommentCreate);//配置場所を指定
 
 }
-
+//------------------------------------HTMLに要素を作成する関数----------------------------------------------------------
+function CreateTAG(tag,pearent){
+    let New_Tag = document.createElement(tag);//コードエリア生成２
+    pearent.appendChild(New_Tag);
+    return New_Tag
+}
