@@ -284,6 +284,9 @@ function HenkouKensakuVer2(LogID,UnitNo) {
     let LogIDPoint = 0;
     let BeginEnd = false;
     let TEIGIBeginEnd = false;
+    let CaseBeginEnd = false;//ケース文判定
+    let CaseIndent="";
+    let CaseResult
     for (let b = UnitNo; b < CodeInfoArray.length; b++) {//CodeInfoArray(全てのプログラム)の行を一つずつ調べる
         let CodeInfo = CodeInfoArray[b];
         //その行が定義されている行か調べる
@@ -293,7 +296,18 @@ function HenkouKensakuVer2(LogID,UnitNo) {
             TEIGIBeginEnd = false;
         if(TEIGIBeginEnd === true)
             CodeInfo.Teigi=true;
-
+        //その行がケース文の最中かどうか調べる
+        CaseResult =CodeInfo.String.trim().match(/case .* of/)
+        if(CaseResult !=null && CodeInfo.Teigi==undefined &&CaseBeginEnd == false){//case .* ofが存在する場合
+            CaseResult
+            CaseIndent   = CodeInfo.String.substring(0,CodeInfo.String.indexOf(CaseResult[0]));//インデントを記録
+            CaseIndent.replace(/\t/g,"    ")
+            CaseBeginEnd = true;}
+        else if(CaseBeginEnd == true&&CodeInfo.String.startsWith(`${CaseIndent}end`))
+            CaseBeginEnd = false;
+        if(CaseBeginEnd === true)
+            CodeInfo.CaseString=true;//case文であることの証明
+        //-----------------------------------
         if(CodeInfo.LogID===undefined)
             CodeInfo.LogID="";
         if (CodeInfo.String.includes(LogID) && CodeInfo.String.trim().startsWith("//")) {//コメントアウトでログIDが見つかった場合
@@ -449,7 +463,12 @@ function LogKaKuNiN(i, HenkouLog_Child) {
     else if(i!=0&&LogArray[i-1].String.trim().startsWith("}"))
         HukusuComment=false;
     if (LogArray[i].String.trim().startsWith("//") === false && HukusuComment === false &&LogArray[i].String.trim() != "") {//コメントアウトされてないもの
-        if (LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
+
+        let CaseKakunin=false
+        if (LogArray[i].CaseString === true&&(/:[^=]/.test(LogArray[i].String))&&LogArray[i].Teigi != true)//case文の分岐判定
+            CaseKakunin=true;
+
+        if (CaseKakunin===true||LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
             var Kakunin_No_Hyouzi=true;
             KaKuNiNpoint++;
             let KaKuNiN = document.createElement('div');
@@ -467,8 +486,9 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                 KaKuNiNpoint--;//確認Noを表示させないので増加させない。
                 Kakunin_No_Hyouzi=false;
             }
+
             //以下分岐の処理
-            if (LogArray[i].String.includes('if') && LogArray[i].String.startsWith("//") === false) {//この中のに入ったら分岐確認
+            if (LogArray[i].String.includes('if')) {//この中のに入ったら分岐確認
                 KAKUNIN_childstring = "分岐確認";
                 let ifString = LogArray[i].String.trim().replace(/\t/, " ");//タブ文字を空白に変換
                 let A = "True";//左側
@@ -515,6 +535,9 @@ function LogKaKuNiN(i, HenkouLog_Child) {
                 KaKuNiN.appendChild(KaKuNiN_child2);
                 KaKuNiN_TUUKA = true;//確認通過
             }
+            else if(CaseKakunin===true){
+                KAKUNIN_childstring = "分岐確認(ケース文)";
+            }
             //以下通過の処理
             else if (KaKuNiN_TUUKA === false) {
                 //console.log(LogArray[i]);
@@ -528,6 +551,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
         }
     }
 }
+
 function KakuninYazirushi(i) {
     let KaKuNiN_list_i = document.getElementById("KaKuNiN_list" + (i + 1));
     let KaKuNiN_count = KaKuNiN_list_i.childElementCount;
