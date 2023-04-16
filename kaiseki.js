@@ -405,7 +405,7 @@ function SelectLogHyouziVer2() {
     }
     hljs.initHighlightingOnLoad();//一旦ライブラリのハイライト追加
     highlight2.textContent.split("\n");//その後もう一度spanタグを入れるため繰り返し処理
-    for (let i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {
+    for (let i = 0; i <= LogArray[LogArray.length - 1].LogIDPoint; i++) {//タグで囲まれた島の回数繰り返す
         let NowLogIDp = document.getElementById("LogIDポイント" + i)
         NowLogIDp.innerHTML = "<span id =" + i + "1番目の行>" + NowLogIDp.innerHTML + "</span>";
         let ComentElements = NowLogIDp.getElementsByClassName('hljs-comment');
@@ -434,7 +434,7 @@ function SelectLogHyouziVer2() {
             NowLogIDp.removeChild(NowLogIDp.lastChild);//余分にできたSpanタグを削除
         let NowLogIDp_child_count = NowLogIDp.childElementCount;
         console.log("修正・追加"+NowLogIDp_child_count+"行");
-        for (let a = 0; a < NowLogIDp_child_count; a++) {
+        for (let a = 0; a < NowLogIDp_child_count; a++) {//島の中の一行ずつ繰り返す
             NowLogIDp.children[a].id = `${i + 1}の${a + 1}行目`;//0始まりなので、1を+する
         }
         KakuninYazirushi(i);
@@ -465,8 +465,11 @@ function LogKaKuNiN(i, HenkouLog_Child) {
     if (LogArray[i].String.trim().startsWith("//") === false && HukusuComment === false &&LogArray[i].String.trim() != "") {//コメントアウトされてないもの
 
         let CaseKakunin=false
-        if (LogArray[i].CaseString === true&&(/:[^=]/.test(LogArray[i].String))&&LogArray[i].Teigi != true)//case文の分岐判定
-            CaseKakunin=true;
+        //case文の分岐判定
+        if (LogArray[i].CaseString === true&&(/:[^=]/.test(LogArray[i].String))&&LogArray[i].Teigi != true)//:=と定義以外
+        {   if (LogArray[i].String.trim().startsWith("SQL") === false)//SQL文は除外
+            {   CaseKakunin=true;}
+        }
 
         if (CaseKakunin===true||LogArray[i].String.includes('if') || KaKuNiN_TUUKA === false) {//この中に入ったら赤枠作成
             var Kakunin_No_Hyouzi=true;
@@ -537,6 +540,7 @@ function LogKaKuNiN(i, HenkouLog_Child) {
             }
             else if(CaseKakunin===true){
                 KAKUNIN_childstring = "分岐確認(ケース文)";
+                KaKuNiN_TUUKA = true;//確認通過
             }
             //以下通過の処理
             else if (KaKuNiN_TUUKA === false) {
